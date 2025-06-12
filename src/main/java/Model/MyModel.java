@@ -8,8 +8,10 @@ import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 
 import java.beans.PropertyChangeListener;
+import java.util.Observable;
+import java.util.Observer;
 
-public class MyModel implements IModel {
+public class MyModel extends Observable implements IModel {
     private Maze maze;
     private Position playerPosition;
     private MyMazeGenerator myMazeGenerator;
@@ -25,11 +27,28 @@ public class MyModel implements IModel {
     public void generateMaze(int rows, int cols) {
         maze = myMazeGenerator.generate(rows, cols);
         playerPosition = maze.getStartPosition();
+        playerRow = playerPosition.getRowIndex();
+        playerCol = playerPosition.getColumnIndex();
+        setChanged();
+        notifyObservers("mazeGenerated");
+        movePlayer(playerRow, playerCol);
     }
 
-    public Maze getMaze() {
-        return maze;
+
+    public void updatePlayerLocation(MovementDirection direction) {
+        int newRow = playerRow;
+        int newCol = playerCol;
+
+        switch (direction) {
+            case UP -> newRow--;
+            case DOWN -> newRow++;
+            case LEFT -> newCol--;
+            case RIGHT -> newCol++;
+        }
+
+        movePlayer(newRow, newCol);
     }
+
 
     public Position getPlayerPosition() {
         return playerPosition;
@@ -41,18 +60,21 @@ public class MyModel implements IModel {
         return maze.getCell(row, col) == 0;
     }
 
-    public void movePlayer(int dRow, int dCol) {
-        int newRow = playerPosition.getRowIndex() + dRow;
-        int newCol = playerPosition.getColumnIndex() + dCol;
-
+    public void movePlayer(int newRow, int newCol) {
         if (isWalkable(newRow, newCol)) {
             playerPosition = new Position(newRow, newCol);
+            playerRow = newRow;
+            playerCol = newCol;
+            setChanged();
+            notifyObservers("playerMoved");
         }
     }
+
 
     public boolean isAtGoal() {
         return playerPosition.equals(maze.getGoalPosition());
     }
+
     public int getMazeRows() {
         return maze.getRows();
     }
@@ -65,8 +87,29 @@ public class MyModel implements IModel {
         return maze.getCell(row, col);
     }
 
-    public Position getGoalPosition() {
-        return maze.getGoalPosition();
+
+    @Override
+    public int getPlayerRow() {
+        return playerRow;
     }
 
+    @Override
+    public int getPlayerCol() {
+        return playerCol;
+    }
+
+    @Override
+    public void solveMaze() {
+        solution = new Solution();
+
+    }
+    @Override
+    public void assignObserver(Observer o) {
+        this.addObserver(o);
+    }
+
+    @Override
+    public Solution getSolution() {
+        return solution;
+    }
 }

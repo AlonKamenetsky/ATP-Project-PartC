@@ -1,53 +1,39 @@
 package ViewModel;
 
-import Model.MyModel;
-import algorithms.mazeGenerators.Position;
+import Model.IModel;
+import Model.MovementDirection;
 
-public class MyViewModel {
+import java.util.Observable;
+import java.util.Observer;
 
-    private final MyModel model;
+public class MyViewModel extends Observable implements Observer {
+    private IModel model;
 
-    public MyViewModel() {
-        model = new MyModel();
+    public MyViewModel(IModel model) {
+        this.model = model;
+        this.model.assignObserver(this); //Observe the Model for it's changes
     }
 
-    public void start() {
-        model.start();
+    @Override
+    public void update(Observable o, Object arg) {
+        setChanged();
+        notifyObservers(arg);
+    }
+    public void movePlayer(KeyEvent keyEvent) {
+        MovementDirection direction = switch (keyEvent.getCode()) {
+            case UP -> MovementDirection.UP;
+            case DOWN -> MovementDirection.DOWN;
+            case LEFT -> MovementDirection.LEFT;
+            case RIGHT -> MovementDirection.RIGHT;
+            default -> null;
+        };
+
+        if (direction != null) {
+            model.updatePlayerLocation(direction);
+        }
     }
 
-    public void stop() {
-        model.stop();
-    }
 
-    public void generateMaze(int rows, int cols) {
-        model.generateMaze(rows, cols);
-    }
 
-    public int getMazeRows() {
-        return model.getMazeRows();
-    }
-
-    public int getMazeCols() {
-        return model.getMazeCols();
-    }
-
-    public int getCellValue(int row, int col) {
-        return model.getCell(row, col);
-    }
-
-    public Position getPlayerPosition() {
-        return model.getPlayerPosition();
-    }
-
-    public Position getGoalPosition() {
-        return model.getGoalPosition();
-    }
-
-    public void movePlayer(int dRow, int dCol) {
-        model.movePlayer(dRow, dCol);
-    }
-
-    public boolean isAtGoal() {
-        return model.isAtGoal();
-    }
 }
+
