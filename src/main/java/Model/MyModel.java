@@ -5,36 +5,25 @@ package Model;
 import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.MyMazeGenerator;
 import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
 
 import java.beans.PropertyChangeListener;
 
 public class MyModel implements IModel {
     private Maze maze;
     private Position playerPosition;
+    private MyMazeGenerator myMazeGenerator;
+    private Solution solution;
+    private int playerRow;
+    private int playerCol;
 
-    @Override
-    public void start() {
-        // Nothing to start yet — maybe for future server or threads
+    public MyModel() {
+        myMazeGenerator = new MyMazeGenerator();
     }
 
-    @Override
-    public void stop() {
-        // Nothing to stop — clean shutdown hooks can go here
-    }
-
-    @Override
-    public void doAction(String input) {
-
-    }
-
-    @Override
-    public void addListener(PropertyChangeListener listener) {
-
-    }
 
     public void generateMaze(int rows, int cols) {
-        MyMazeGenerator generator = new MyMazeGenerator();
-        maze = generator.generate(rows, cols);
+        maze = myMazeGenerator.generate(rows, cols);
         playerPosition = maze.getStartPosition();
     }
 
