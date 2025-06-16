@@ -9,10 +9,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
-import java.awt.*;
+import javafx.scene.control.Label;
 import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.Observable;
