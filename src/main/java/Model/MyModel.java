@@ -1,7 +1,4 @@
 package Model;
-
-
-
 import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.MyMazeGenerator;
 import algorithms.mazeGenerators.Position;
@@ -62,7 +59,6 @@ public class MyModel extends Observable implements IModel {
 
     public void movePlayer(int newRow, int newCol) {
         if (isWalkable(newRow, newCol)) {
-            playerPosition = new Position(newRow, newCol);
             playerRow = newRow;
             playerCol = newCol;
             setChanged();
@@ -111,5 +107,10 @@ public class MyModel extends Observable implements IModel {
     @Override
     public Solution getSolution() {
         return solution;
+    }
+
+    @Override
+    public Maze getMaze() {
+        return maze;
     }
 }

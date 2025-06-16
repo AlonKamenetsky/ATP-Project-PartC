@@ -1,73 +1,109 @@
-package main.java.View;
+package View;
 
 import ViewModel.MyViewModel;
 import algorithms.mazeGenerators.Position;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
-public class MyViewController {
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.net.URL;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.ResourceBundle;
 
+public class MyViewController implements Initializable, Observer {
+    public MyViewModel viewModel;
+
+    public void setViewModel(MyViewModel viewModel) {
+        this.viewModel = viewModel;
+        this.viewModel.addObserver(this);
+    }
     @FXML
-    private Canvas mazeCanvas;
-
-    private final int cellSize = 25; // adjust as needed
-    private final MyViewModel viewModel = new MyViewModel();
-
+    private TextField textField_mazeRows;
     @FXML
-    public void initialize() {
-        mazeCanvas.setFocusTraversable(true); // allow key events
-        mazeCanvas.setOnKeyPressed(this::handleKeyPress);
+    private TextField textField_mazeColumns;
+    @FXML
+    private MazeDisplayer mazeDisplayer;
+    @FXML
+    private Label playerRow;
+    @FXML
+    private Label playerCol;
+
+    StringProperty updatePlayerRow = new SimpleStringProperty();
+    StringProperty updatePlayerCol = new SimpleStringProperty();
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        playerRow.textProperty().bind(updatePlayerRow);
+        playerCol.textProperty().bind(updatePlayerCol);
     }
 
-    @FXML
-    private void onGenerateMazeClicked() {
-        viewModel.generateMaze(20, 20); // fixed size for now
-        drawMaze();
+    public void generateMaze(ActionEvent actionEvent) {
+        int rows = Integer.valueOf(textField_mazeRows.getText());
+        int cols = Integer.valueOf(textField_mazeColumns.getText());
+
+        viewModel.generateMaze(rows, cols);
     }
+
+    public void solveMaze(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setContentText("Solving maze...");
+        alert.show();
+        viewModel.solveMaze();
+    }
+
 
     private void handleKeyPress(KeyEvent event) {
         switch (event.getCode()) {
-            case UP -> viewModel.movePlayer(-1, 0);
-            case DOWN -> viewModel.movePlayer(1, 0);
-            case LEFT -> viewModel.movePlayer(0, -1);
-            case RIGHT -> viewModel.movePlayer(0, 1);
-            default -> { return; }
-        }
+            case UP -> viewModel.movePlayer(event);
+            case DOWN -> viewModel.movePlayer(event);
+            case LEFT -> viewModel.movePlayer(event);
+            case RIGHT -> viewModel.movePlayer(event);
+            default -> {
 
-        drawMaze();
-
-        if (viewModel.isAtGoal()) {
-            System.out.println("🎉 Goal reached!");
-        }
-    }
-
-    private void drawMaze() {
-        GraphicsContext gc = mazeCanvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, mazeCanvas.getWidth(), mazeCanvas.getHeight());
-
-        int rows = viewModel.getMazeRows();
-        int cols = viewModel.getMazeCols();
-
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                int val = viewModel.getCellValue(row, col);
-
-                gc.setFill(val == 1 ? Color.BLACK : Color.WHITE);
-                gc.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
             }
         }
-
-        // Draw goal
-        Position goal = viewModel.getGoalPosition();
-        gc.setFill(Color.GREEN);
-        gc.fillOval(goal.getColumnIndex() * cellSize, goal.getRowIndex() * cellSize, cellSize, cellSize);
-
-        // Draw player
-        Position player = viewModel.getPlayerPosition();
-        gc.setFill(Color.BLUE);
-        gc.fillOval(player.getColumnIndex() * cellSize, player.getRowIndex() * cellSize, cellSize, cellSize);
     }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        String change = (String) arg;
+        switch (change){
+            case "maze generated" -> mazeGenerated();
+            case "player moved" -> playerMoved();
+            case "maze solved" -> mazeSolved();
+            default -> System.out.println("Not implemented change: " + change);
+        }
+    }
+    private void mazeSolved() {
+        mazeDisplayer.setSolution(viewModel.getSolution());
+    }
+
+    private void playerMoved() {
+        setPlayerPosition(viewModel.getPlayerRow(), viewModel.getPlayerCol());
+    }
+
+    private void mazeGenerated() {
+        mazeDisplayer.drawMaze(viewModel.getMaze());
+    }
+    public void setPlayerPosition(int row, int col){
+        mazeDisplayer.setPlayerPosition(row, col);
+        setUpdatePlayerRow(row);
+        setUpdatePlayerCol(col);
+    }
+    public void setUpdatePlayerRow(int updatePlayerRow) {
+        this.updatePlayerRow.set(updatePlayerRow + "");
+    }
+    public void setUpdatePlayerCol(int updatePlayerCol) {
+        this.updatePlayerCol.set(updatePlayerCol + "");
+    }
+
 }

@@ -1,21 +1,25 @@
 package Model;
 
+import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
 
 import java.beans.PropertyChangeListener;
 import java.util.Observer;
 
 public interface IModel {
-    void generateMaze(int rows, int cols);
-    int getPlayerRow();
-    int getPlayerCol();
-    void solveMaze();
-    void updatePlayerLocation(MovementDirection direction);
-    Position getPlayerPosition();
-    int getMazeRows();
-    int getMazeCols();
-    int getCell(int row, int col);
-    void movePlayer(int newRow, int newCol);
-    void assignObserver(Observer o);
-     Solution getSolution();
+    public void generateMaze(int rows, int cols);
+    public int getPlayerRow();
+    public int getPlayerCol();
+    public void solveMaze();
+    public void updatePlayerLocation(Model.MovementDirection direction);
+    public Position getPlayerPosition();
+    public int getMazeRows();
+    public int getMazeCols();
+    public int getCell(int row, int col);
+    public void movePlayer(int newRow, int newCol);
+    public void assignObserver(Observer o);
+    public Solution getSolution();
+    public Maze getMaze();
+
 }
