@@ -1,4 +1,4 @@
-package View;
+package main.java.View;
 
 import ViewModel.MyViewModel;
 import algorithms.mazeGenerators.Position;
