@@ -13,22 +13,17 @@
     <!-- Maze Canvas -->
     <MazeDisplayer fx:id="mazeDisplayer" layoutX="50" layoutY="100" width="700" height="400"/>
 
+    <!-- Title Label -->
+    <Label layoutX="50" layoutY="50" text="Maze Generator and Solver" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
     <!-- Labels and Inputs -->
     <Label layoutX="50" layoutY="20" text="Rows:"/>
-    <TextField fx:id="textField_mazeRows" layoutX="90" layoutY="15" prefWidth="60"/>
+    <TextField fx:id="mazeRows" layoutX="90" layoutY="15" prefWidth="60"/>
 
     <Label layoutX="170" layoutY="20" text="Columns:"/>
-    <TextField fx:id="textField_mazeColumns" layoutX="230" layoutY="15" prefWidth="60"/>
+    <TextField fx:id="mazeColumns" layoutX="230" layoutY="15" prefWidth="60"/>
 
-    <!-- Player Row/Col Display -->
-    <Label layoutX="320" layoutY="20" text="Player Row:"/>
-    <Label fx:id="playerRow" layoutX="400" layoutY="20"/>
 
-    <Label layoutX="470" layoutY="20" text="Player Col:"/>
-    <Label fx:id="playerCol" layoutX="550" layoutY="20"/>
 
-    <!-- Buttons -->
-    <Button fx:id="generateButton" layoutX="620" layoutY="15" text="Generate Maze" onAction="#generateMaze"/>
-    <Button fx:id="solveButton" layoutX="720" layoutY="15" text="Solve Maze" onAction="#solveMaze"/>
 
 </AnchorPane>
