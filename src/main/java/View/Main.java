@@ -11,9 +11,6 @@ import javafx.stage.Stage;
 import javafx.scene.input.KeyEvent;
 
 
-import static Model.MovementDirection.*;
-
-
 public class Main extends Application {
 
     @Override
@@ -44,8 +41,6 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
-
 
 
     public static void main(String[] args) {

@@ -20,10 +20,10 @@ public class MazeDisplayer extends Canvas {
     private Solution solution;
     private int rows;
     private int cols;
-
+    private Maze currentMaze;
     // player position:
-    private int playerRow ;
-    private int playerCol ;
+    private int playerRow;
+    private int playerCol;
     // wall and player images:
     StringProperty imageFileNameWall = new SimpleStringProperty();
     StringProperty imageFileNamePlayer = new SimpleStringProperty();
@@ -53,6 +53,7 @@ public class MazeDisplayer extends Canvas {
         this.playerCol = col;
         draw();
     }
+
     public void setEndPoint(int row, int col) {
         this.goalRow = row;
         this.goalCol = col;
@@ -89,6 +90,7 @@ public class MazeDisplayer extends Canvas {
     }
 
     public void drawMaze(Maze maze) {
+        this.currentMaze = maze;
         this.maze = maze;
         this.rows = maze.getRows();
         this.cols = maze.getCols();
@@ -121,7 +123,7 @@ public class MazeDisplayer extends Canvas {
 
         Image wallImage = null;
         try {
-          //  wallImage = new Image(new FileInputStream(getImageFileNameWall()));
+            //  wallImage = new Image(new FileInputStream(getImageFileNameWall()));
             if (getImageFileNameWall() != null)
                 wallImage = new Image(new FileInputStream(getImageFileNameWall()));
 
@@ -151,14 +153,14 @@ public class MazeDisplayer extends Canvas {
 
         Image playerImage = null;
         try {
-          //  playerImage = new Image (new FileInputStream(getImageFileNamePlayer()));
+            //  playerImage = new Image (new FileInputStream(getImageFileNamePlayer()));
             if (getImageFileNamePlayer() != null)
                 playerImage = new Image(new FileInputStream(getImageFileNamePlayer()));
 
         } catch (FileNotFoundException e) {
             System.out.println("There is no player image file");
         }
-        if(playerImage == null)
+        if (playerImage == null)
             graphicsContext.fillRect(x, y, cellWidth, cellHeight);
         else
             graphicsContext.drawImage(playerImage, x, y, cellWidth, cellHeight);
@@ -178,12 +180,13 @@ public class MazeDisplayer extends Canvas {
         } catch (FileNotFoundException e) {
             System.out.println("There is no player image file");
         }
-        if(endPointImage == null)
+        if (endPointImage == null)
             graphicsContext.fillRect(x, y, cellWidth, cellHeight);
         else
             graphicsContext.drawImage(endPointImage, x, y, cellWidth, cellHeight);
 
     }
+
     private void drawSolution(GraphicsContext gc, double cellHeight, double cellWidth) {
         if (solution == null || solution.getSolutionPath().size() < 2)
             return;
@@ -224,6 +227,24 @@ public class MazeDisplayer extends Canvas {
             gc.strokeLine(x1, y1, x2, y2);
         }
     }
+
+    public void highlightCell(int row, int col, Color color) {
+        double cellHeight = getHeight() / rows;
+        double cellWidth = getWidth() / cols;
+        double x = col * cellWidth;
+        double y = row * cellHeight;
+
+        GraphicsContext gc = getGraphicsContext2D();
+        gc.setFill(color);
+        gc.fillRect(x, y, cellWidth, cellHeight);
+    }
+    public void clearSolution() {
+        this.solution = null;
+        drawMaze(currentMaze); // redraw maze without solution
+        setPlayerPosition(playerRow, playerCol);
+        setEndPoint(goalRow, goalCol);
+    }
+
 
 
 }
