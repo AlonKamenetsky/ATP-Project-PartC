@@ -106,7 +106,10 @@ public class MazeDisplayer extends Canvas {
 
         Image wallImage = null;
         try {
-            wallImage = new Image(new FileInputStream(getImageFileNameWall()));
+          //  wallImage = new Image(new FileInputStream(getImageFileNameWall()));
+            if (getImageFileNameWall() != null)
+                wallImage = new Image(new FileInputStream(getImageFileNameWall()));
+
         } catch (FileNotFoundException e) {
             System.out.println("There is no wall image file");
         }
@@ -133,7 +136,10 @@ public class MazeDisplayer extends Canvas {
 
         Image playerImage = null;
         try {
-            playerImage = new Image(new FileInputStream(getImageFileNamePlayer()));
+          //  playerImage = new Image(new FileInputStream(getImageFileNamePlayer()));
+            if (getImageFileNamePlayer() != null)
+                playerImage = new Image(new FileInputStream(getImageFileNamePlayer()));
+
         } catch (FileNotFoundException e) {
             System.out.println("There is no player image file");
         }

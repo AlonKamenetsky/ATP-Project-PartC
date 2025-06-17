@@ -32,8 +32,11 @@ public class MyViewModel extends Observable implements Observer {
             case RIGHT -> direction = MovementDirection.RIGHT;
             default -> { return; }
         }
-
+        setChanged();
+        notifyObservers("playerMoved");
         model.updatePlayerLocation(direction);
+
+
     }
     public int getPlayerRow(){
         return model.getPlayerRow();

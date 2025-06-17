@@ -1,6 +1,7 @@
 package View;
 
 import ViewModel.MyViewModel;
+import algorithms.mazeGenerators.Maze;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -36,7 +37,11 @@ public class MyViewController implements Initializable, Observer {
     private Label playerRow;
     @FXML
     private Label playerCol;
+    @FXML
+    private TextField mazeRows;
 
+    @FXML
+    private TextField mazeColumns;
     StringProperty updatePlayerRow = new SimpleStringProperty();
     StringProperty updatePlayerCol = new SimpleStringProperty();
 
@@ -44,7 +49,11 @@ public class MyViewController implements Initializable, Observer {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         playerRow.textProperty().bind(updatePlayerRow);
         playerCol.textProperty().bind(updatePlayerCol);
+
+        mazeDisplayer.setFocusTraversable(true);
+        mazeDisplayer.setOnKeyPressed(this::handleKeyPress);
     }
+
 
     public void generateMaze(ActionEvent actionEvent) {
         int rows = Integer.valueOf(textField_mazeRows.getText());
@@ -61,28 +70,25 @@ public class MyViewController implements Initializable, Observer {
     }
 
 
-    private void handleKeyPress(KeyEvent event) {
+    public void handleKeyPress(KeyEvent event) {
         switch (event.getCode()) {
-            case UP -> viewModel.movePlayer(event);
-            case DOWN -> viewModel.movePlayer(event);
-            case LEFT -> viewModel.movePlayer(event);
-            case RIGHT -> viewModel.movePlayer(event);
-            default -> {
-
-            }
+            case UP, DOWN, LEFT, RIGHT -> viewModel.movePlayer(event);
         }
+        System.out.println("Key pressed: " + event.getCode());
     }
+
 
     @Override
     public void update(Observable o, Object arg) {
         String change = (String) arg;
         switch (change){
-            case "maze generated" -> mazeGenerated();
-            case "player moved" -> playerMoved();
-            case "maze solved" -> mazeSolved();
+            case "mazeGenerated" -> mazeGenerated();
+            case "playerMoved" -> playerMoved();
+            case "mazeSolved" -> mazeSolved();
             default -> System.out.println("Not implemented change: " + change);
         }
     }
+
     private void mazeSolved() {
         mazeDisplayer.setSolution(viewModel.getSolution());
     }
@@ -105,5 +111,29 @@ public class MyViewController implements Initializable, Observer {
     public void setUpdatePlayerCol(int updatePlayerCol) {
         this.updatePlayerCol.set(updatePlayerCol + "");
     }
+    @FXML
+    private void startMaze() {
+        try {
+            int rows = Integer.parseInt(mazeRows.getText());
+            int cols = Integer.parseInt(mazeColumns.getText());
+            viewModel.generateMaze(rows, cols);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input for maze size.");
+        }
+    }
+    @FXML
+    public void onStartClicked() {
+        try {
+            int rows = Integer.parseInt(mazeRows.getText());
+            int cols = Integer.parseInt(mazeColumns.getText());
 
+            viewModel.generateMaze(rows, cols);
+            Maze maze = viewModel.getMaze();
+
+            mazeDisplayer.drawMaze(maze);
+            mazeDisplayer.setPlayerPosition(0, 0);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input: rows and columns must be integers.");
+        }
+    }
 }
