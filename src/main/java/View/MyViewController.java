@@ -7,17 +7,14 @@ import algorithms.mazeGenerators.Position;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyEvent;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.Observable;
@@ -193,8 +190,14 @@ public class MyViewController implements Initializable, Observer {
     }
 
 
+    @FXML
     public void solveMaze(javafx.event.ActionEvent actionEvent) {
-        viewModel.solveMaze();
-        mazeDisplayer.setSolution(viewModel.getSolution());
+        viewModel.solveMaze(); // This sets the solution inside model
+        Maze maze = viewModel.getMaze(); // Get current maze (updated one)
+
+        mazeDisplayer.drawMaze(maze); // Updates maze reference + triggers draw()
+        mazeDisplayer.setSolution(viewModel.getSolution());// Redraw maze with updated solution
+        mazeDisplayer.requestFocus();
     }
+
 }

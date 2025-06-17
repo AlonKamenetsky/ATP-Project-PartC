@@ -103,10 +103,17 @@ public class MyModel extends Observable implements IModel {
         if (maze == null)
             return;
 
+        // Use current player position
+        Position current = new Position(playerRow, playerCol);
+
+        Maze dynamicMaze = new Maze(maze.toByteArray()); // Make a copy
+        dynamicMaze.setStartPosition(current);
+
+        ISearchable searchableMaze = new SearchableMaze(dynamicMaze);
         ISearchingAlgorithm solver = new BreadthFirstSearch();
-        SearchableMaze searchableMaze = new SearchableMaze(maze);
         this.solution = solver.solve(searchableMaze);
     }
+
     @Override
     public void assignObserver(Observer o) {
         this.addObserver(o);
