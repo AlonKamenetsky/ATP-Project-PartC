@@ -61,4 +61,11 @@ public class MyViewModel extends Observable implements Observer {
     public Maze getMaze(){
         return model.getMaze();
     }
+
+    public int getEndPointRow(){
+        return model.getEndPoint().getRowIndex();
+    }
+    public int getEndPointCol(){
+        return model.getEndPoint().getColumnIndex();
+    }
 }

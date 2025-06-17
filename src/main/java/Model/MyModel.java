@@ -2,13 +2,15 @@ package Model;
 import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.MyMazeGenerator;
 import algorithms.mazeGenerators.Position;
-import algorithms.search.Solution;
+import algorithms.search.*;
+
 import java.util.Observable;
 import java.util.Observer;
 
 public class MyModel extends Observable implements IModel {
     private Maze maze;
     private Position playerPosition;
+    private Position endPoint;
     private MyMazeGenerator myMazeGenerator;
     private Solution solution;
     private int playerRow;
@@ -94,8 +96,12 @@ public class MyModel extends Observable implements IModel {
 
     @Override
     public void solveMaze() {
-        solution = new Solution();
+        if (maze == null)
+            return;
 
+        ISearchingAlgorithm solver = new BreadthFirstSearch();
+        SearchableMaze searchableMaze = new SearchableMaze(maze);
+        this.solution = solver.solve(searchableMaze);
     }
     @Override
     public void assignObserver(Observer o) {
@@ -110,5 +116,10 @@ public class MyModel extends Observable implements IModel {
     @Override
     public Maze getMaze() {
         return maze;
+    }
+
+    @Override
+    public Position getEndPoint() {
+        return endPoint;
     }
 }

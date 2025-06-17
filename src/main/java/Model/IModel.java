@@ -19,5 +19,7 @@ public interface IModel {
     public void assignObserver(Observer o);
     public Solution getSolution();
     public Maze getMaze();
+    public Position getEndPoint();
+
 
 }

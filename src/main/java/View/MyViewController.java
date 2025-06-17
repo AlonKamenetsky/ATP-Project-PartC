@@ -2,8 +2,11 @@ package View;
 
 import ViewModel.MyViewModel;
 import algorithms.mazeGenerators.Maze;
+import algorithms.mazeGenerators.Position;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
@@ -22,6 +25,7 @@ import java.util.ResourceBundle;
 
 public class MyViewController implements Initializable, Observer {
     public MyViewModel viewModel;
+
 
     public void setViewModel(MyViewModel viewModel) {
         this.viewModel = viewModel;
@@ -52,7 +56,21 @@ public class MyViewController implements Initializable, Observer {
 
         mazeDisplayer.setFocusTraversable(true);
         mazeDisplayer.setOnKeyPressed(this::handleKeyPress);
+
+        // Prevent arrow keys from moving the caret in text fields
+        mazeRows.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode().isArrowKey()) {
+                event.consume();
+            }
+        });
+
+        mazeColumns.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode().isArrowKey()) {
+                event.consume();
+            }
+        });
     }
+
 
 
     public void generateMaze(ActionEvent actionEvent) {
@@ -62,20 +80,16 @@ public class MyViewController implements Initializable, Observer {
         viewModel.generateMaze(rows, cols);
     }
 
-    public void solveMaze(ActionEvent actionEvent) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText("Solving maze...");
-        alert.show();
-        viewModel.solveMaze();
-    }
-
-
     public void handleKeyPress(KeyEvent event) {
         switch (event.getCode()) {
-            case UP, DOWN, LEFT, RIGHT -> viewModel.movePlayer(event);
+            case UP, DOWN, LEFT, RIGHT -> {
+                viewModel.movePlayer(event);
+                mazeDisplayer.requestFocus();
+            }
         }
         System.out.println("Key pressed: " + event.getCode());
     }
+
 
 
     @Override
@@ -95,7 +109,22 @@ public class MyViewController implements Initializable, Observer {
 
     private void playerMoved() {
         setPlayerPosition(viewModel.getPlayerRow(), viewModel.getPlayerCol());
+
+        // Check if player reached goal
+        if (viewModel.getPlayerRow() == viewModel.getMaze().getGoalPosition().getRowIndex() &&
+                viewModel.getPlayerCol() == viewModel.getMaze().getGoalPosition().getColumnIndex()) {
+
+            // Show winning message
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Maze Completed");
+            alert.setHeaderText(null);
+            alert.setContentText("🎉 You reached the goal! Well done!");
+            alert.showAndWait();
+            mazeDisplayer.getGraphicsContext2D().clearRect(0, 0,
+                    mazeDisplayer.getWidth(), mazeDisplayer.getHeight());
+        }
     }
+
 
     private void mazeGenerated() {
         mazeDisplayer.drawMaze(viewModel.getMaze());
@@ -111,6 +140,7 @@ public class MyViewController implements Initializable, Observer {
     public void setUpdatePlayerCol(int updatePlayerCol) {
         this.updatePlayerCol.set(updatePlayerCol + "");
     }
+
     @FXML
     private void startMaze() {
         try {
@@ -121,6 +151,8 @@ public class MyViewController implements Initializable, Observer {
             System.out.println("Invalid input for maze size.");
         }
     }
+   // make sure this import exists
+
     @FXML
     public void onStartClicked() {
         try {
@@ -131,9 +163,25 @@ public class MyViewController implements Initializable, Observer {
             Maze maze = viewModel.getMaze();
 
             mazeDisplayer.drawMaze(maze);
-            mazeDisplayer.setPlayerPosition(0, 0);
+            Position playerPosition = maze.getStartPosition();
+            Position goalPosition = maze.getGoalPosition();
+            mazeDisplayer.setPlayerPosition(playerPosition.getRowIndex(), playerPosition.getColumnIndex());
+            mazeDisplayer.setEndPoint(goalPosition.getRowIndex(), goalPosition.getColumnIndex());
+
+            // Clear focus from text fields
+            mazeRows.getParent().requestFocus(); // parent = AnchorPane, it eats the focus
+
+            // Now give focus to canvas
+            Platform.runLater(() -> mazeDisplayer.requestFocus());
+
         } catch (NumberFormatException e) {
             System.out.println("Invalid input: rows and columns must be integers.");
         }
+    }
+
+
+    public void solveMaze(javafx.event.ActionEvent actionEvent) {
+        viewModel.solveMaze();
+        mazeDisplayer.setSolution(viewModel.getSolution());
     }
 }
