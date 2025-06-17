@@ -38,6 +38,12 @@ public class MyViewModel extends Observable implements Observer {
 
 
     }
+    public void movePlayer(MovementDirection direction) {
+        model.updatePlayerLocation(direction);
+        setChanged();
+        notifyObservers("playerMoved");
+    }
+
     public int getPlayerRow(){
         return model.getPlayerRow();
     }

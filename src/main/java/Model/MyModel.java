@@ -41,6 +41,10 @@ public class MyModel extends Observable implements IModel {
             case DOWN -> newRow++;
             case LEFT -> newCol--;
             case RIGHT -> newCol++;
+            case UP_LEFT -> {newRow--;newCol--;}
+            case UP_RIGHT -> {newRow--;newCol++;}
+            case DOWN_LEFT -> {newRow++;newCol--;}
+            case DOWN_RIGHT -> {newRow++;newCol++;}
         }
 
         movePlayer(newRow, newCol);

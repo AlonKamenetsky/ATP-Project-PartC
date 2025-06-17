@@ -1,5 +1,6 @@
 package View;
 
+import Model.MovementDirection;
 import ViewModel.MyViewModel;
 import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.Position;
@@ -22,6 +23,7 @@ import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
+
 
 public class MyViewController implements Initializable, Observer {
     public MyViewModel viewModel;
@@ -81,14 +83,25 @@ public class MyViewController implements Initializable, Observer {
     }
 
     public void handleKeyPress(KeyEvent event) {
+        System.out.println("Pressed: " + event.getCode());
         switch (event.getCode()) {
-            case UP, DOWN, LEFT, RIGHT -> {
-                viewModel.movePlayer(event);
-                mazeDisplayer.requestFocus();
-            }
+            case W -> viewModel.movePlayer(MovementDirection.UP);
+            case S -> viewModel.movePlayer(MovementDirection.DOWN);
+            case A -> viewModel.movePlayer(MovementDirection.LEFT);
+            case D -> viewModel.movePlayer(MovementDirection.RIGHT);
+            case Q -> viewModel.movePlayer(MovementDirection.UP_LEFT);
+            case E -> viewModel.movePlayer(MovementDirection.UP_RIGHT);
+            case Z -> viewModel.movePlayer(MovementDirection.DOWN_LEFT);
+            case C -> viewModel.movePlayer(MovementDirection.DOWN_RIGHT);
+            default -> { return; }
         }
+
+        mazeDisplayer.requestFocus(); // refocus canvas
         System.out.println("Key pressed: " + event.getCode());
     }
+
+
+
 
 
 
