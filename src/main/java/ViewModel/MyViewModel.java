@@ -1,14 +1,13 @@
 package ViewModel;
 
-
 import Model.IModel;
 import Model.MovementDirection;
 import algorithms.mazeGenerators.Maze;
 import algorithms.search.Solution;
 import javafx.scene.input.KeyEvent;
-
 import java.util.Observable;
 import java.util.Observer;
+
 
 public class MyViewModel extends Observable implements Observer {
     private IModel model;
@@ -31,10 +30,9 @@ public class MyViewModel extends Observable implements Observer {
             case DOWN -> direction = MovementDirection.DOWN;
             case LEFT -> direction = MovementDirection.LEFT;
             case RIGHT -> direction = MovementDirection.RIGHT;
-            default -> {
-                return;
-            }
-        };
+            default -> { return; }
+        }
+
         model.updatePlayerLocation(direction);
     }
     public int getPlayerRow(){
@@ -60,8 +58,4 @@ public class MyViewModel extends Observable implements Observer {
     public Maze getMaze(){
         return model.getMaze();
     }
-
-
-
 }
-

@@ -1,6 +1,5 @@
 package View;
 
-import Model.IModel;
 import Model.MyModel;
 import ViewModel.MyViewModel;
 import javafx.application.Application;
@@ -13,17 +12,23 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MyView.fxml"));
-        Parent root = fxmlLoader.load();
-        primaryStage.setTitle("Maze Game");
-        primaryStage.setScene(new Scene(root, 1000, 700));
-        primaryStage.show();
+    public void start(Stage primaryStage) throws Exception {
+        // Load FXML
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/MyView.fxml"));
+        Parent root = loader.load();
 
-        IModel model = new MyModel();
+        // Initialize Model and ViewModel
+        MyModel model = new MyModel();
         MyViewModel viewModel = new MyViewModel(model);
-        MyViewController controller = fxmlLoader.getController();
+
+        // Inject ViewModel into Controller
+        MyViewController controller = loader.getController();
         controller.setViewModel(viewModel);
+
+        // Set up the stage
+        primaryStage.setTitle("Maze App");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
     }
 
     public static void main(String[] args) {

@@ -3,8 +3,6 @@ package Model;
 import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
-
-import java.beans.PropertyChangeListener;
 import java.util.Observer;
 
 public interface IModel {
