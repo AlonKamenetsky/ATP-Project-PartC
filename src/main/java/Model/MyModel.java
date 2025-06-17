@@ -3,8 +3,6 @@ import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.MyMazeGenerator;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
-
-import java.beans.PropertyChangeListener;
 import java.util.Observable;
 import java.util.Observer;
 
