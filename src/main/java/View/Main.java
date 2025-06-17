@@ -24,11 +24,17 @@ public class Main extends Application {
         // Inject ViewModel into Controller
         MyViewController controller = loader.getController();
         controller.setViewModel(viewModel);
-
-        // Set up the stage
+        Scene scene = new Scene(root);
+        scene.setOnKeyPressed(event -> {
+            controller.handleKeyPress(event); // Delegate to your controller
+        });
+        scene.getStylesheets().add(getClass().getResource("/View/MainStyle.css").toExternalForm());
         primaryStage.setTitle("Maze App");
-        primaryStage.setScene(new Scene(root));
+        primaryStage.setScene(scene); // ✅ reuse the same Scene
         primaryStage.show();
+        root.requestFocus();
+
+
     }
 
     public static void main(String[] args) {
