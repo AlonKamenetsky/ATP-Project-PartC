@@ -9,19 +9,19 @@ import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
-
-import java.awt.event.ActionEvent;
 import java.io.*;
 import java.net.URL;
 import java.util.Observable;
@@ -42,10 +42,6 @@ public class MyViewController implements Initializable, Observer {
     }
 
     @FXML
-    private TextField textField_mazeRows;
-    @FXML
-    private TextField textField_mazeColumns;
-    @FXML
     private MazeDisplayer mazeDisplayer;
     @FXML
     private Label playerRow;
@@ -55,6 +51,10 @@ public class MyViewController implements Initializable, Observer {
     private TextField mazeRows;
     @FXML
     private ImageView victoryGif;
+    @FXML
+    private BorderPane rootPane;
+    @FXML
+    private StackPane mazeContainer;
 
 
     @FXML
@@ -82,15 +82,19 @@ public class MyViewController implements Initializable, Observer {
                 event.consume();
             }
         });
+
+        // Allow resizing even when a window shrinks
+        mazeContainer.setMinWidth(0);
+        mazeContainer.setMinHeight(0);
+
+        mazeDisplayer.widthProperty().bind(mazeContainer.widthProperty());
+        mazeDisplayer.heightProperty().bind(mazeContainer.heightProperty());
+
+        mazeDisplayer.widthProperty().addListener((obs, oldVal, newVal) -> mazeDisplayer.redraw());
+        mazeDisplayer.heightProperty().addListener((obs, oldVal, newVal) -> mazeDisplayer.redraw());
+
     }
 
-
-    public void generateMaze(ActionEvent actionEvent) {
-        int rows = Integer.valueOf(textField_mazeRows.getText());
-        int cols = Integer.valueOf(textField_mazeColumns.getText());
-
-        viewModel.generateMaze(rows, cols);
-    }
 
     public void handleKeyPress(KeyEvent event) {
         System.out.println("Pressed: " + event.getCode());
@@ -239,7 +243,7 @@ public class MyViewController implements Initializable, Observer {
             Position pos = parsePosition(sol.getSolutionPath().get(i).getState());
             if (pos.getRowIndex() == playerRow && pos.getColumnIndex() == playerCol) {
                 Position next = parsePosition(sol.getSolutionPath().get(i + 1).getState());
-                mazeDisplayer.highlightCell(next.getRowIndex(), next.getColumnIndex(), Color.YELLOW);
+                mazeDisplayer.showNextStepImage(next.getRowIndex(), next.getColumnIndex());
                 nextStepVisible = true;
                 highlightedPosition = next;
                 break;
@@ -283,13 +287,7 @@ public class MyViewController implements Initializable, Observer {
         // Remove focus from canvas temporarily
         mazeDisplayer.getParent().requestFocus();
 
-        mazeDisplayer.drawMaze(viewModel.getMaze());
-        mazeDisplayer.setPlayerPosition(viewModel.getPlayerRow(), viewModel.getPlayerCol());
-
-        // Prevent NullPointerException from uninitialized end point
-        if (viewModel.getMaze() != null && viewModel.getMaze().getGoalPosition() != null) {
-            mazeDisplayer.setEndPoint(viewModel.getEndPointRow(), viewModel.getEndPointCol());
-        }
+        mazeDisplayer.removeNextStepImage();
 
         nextStepVisible = false;
         highlightedPosition = null;
@@ -316,5 +314,72 @@ public class MyViewController implements Initializable, Observer {
         if (file != null) {
             viewModel.loadMaze(file);
         }
+    }
+    @FXML
+    private void onNewClicked() {
+        TextInputDialog dialog = new TextInputDialog("10x10");
+        dialog.setTitle("New Maze");
+        dialog.setHeaderText("Create a New Maze");
+        dialog.setContentText("Enter number of rows and columns (e.g., 10x10):");
+
+
+        dialog.showAndWait().ifPresent(input -> {
+            try {
+                String[] parts = input.toLowerCase().split("x");
+                int rows = Integer.parseInt(parts[0].trim());
+                int cols = Integer.parseInt(parts[1].trim());
+
+
+                mazeRows.setText(String.valueOf(rows));
+                mazeColumns.setText(String.valueOf(cols));
+
+
+                onStartClicked();
+
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Invalid Input");
+                alert.setHeaderText(null);
+                alert.setContentText("Please enter a valid format: 10x10");
+                alert.showAndWait();
+            }
+        });
+    }
+
+
+    @FXML
+    private void onPropertiesClicked() {
+        System.out.println("Properties clicked - Opening settings window");
+    }
+
+    @FXML
+    private void onExitClicked() {
+        System.exit(0);
+    }
+
+    @FXML
+    private void onHelpClicked() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Help");
+        alert.setHeaderText("Game Help");
+        alert.setContentText(
+                "Use the following keys to move your player:\n" +
+                        "W – Up   A – Left   S – Down   D – Right\n" +
+                        "Q – Up-Left E – Up-Right Z – Down-Left C – Down-Right\n\n" +
+                        "Click 'Solve Maze' to display the optimal path to the goal (without moving the player).\n" +
+                        "Click 'Show Next Step' to highlight the next move you should take.\n" +
+                        "You can clear the displayed solution using 'Remove Solution' or 'Remove Next Step'."
+        );
+
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void onAboutClicked() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About");
+        alert.setHeaderText("Maze App");
+        alert.setContentText("Maze App was created as a demo project by Shay Smertenko and Alon Kamenetsky. Version 1.0");
+        alert.showAndWait();
     }
 }

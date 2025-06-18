@@ -49,3 +49,16 @@
     -fx-border-width: 4;
     -fx-border-radius: 10;
 }
+.menu-bar {
+    -fx-background-color: linear-gradient(#f2f2f2, #cccccc);
+}
+
+.menu {
+    -fx-font-weight: bold;
+    -fx-font-family: "Arial";
+}
+
+.menu-item {
+    -fx-padding: 5 20 5 20;
+}
+

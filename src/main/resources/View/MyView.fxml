@@ -6,24 +6,54 @@
 <?import View.MazeDisplayer?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="View.MyViewController"
-            prefHeight="600.0" prefWidth="800.0" style="-fx-padding: 20;">
+            fx:id="rootPane"
+            prefHeight="650" prefWidth="1000"
+            style="-fx-padding: 20;">
 
-    <!-- TOP BAR - TITLE -->
+    <!-- TOP BAR -->
     <top>
         <Label text="Maze Game"
                style="-fx-font-size: 24px; -fx-font-weight: bold;"
                BorderPane.alignment="CENTER"/>
+        <MenuBar>
+            <menus>
+                <Menu text="File">
+                    <items>
+                        <MenuItem text="New" onAction="#onNewClicked"/>
+                        <MenuItem text="Save" onAction="#handleSaveMaze"/>
+                        <MenuItem text="Load" onAction="#handleLoadMaze"/>
+                    </items>
+                </Menu>
+                <Menu text="Options">
+                    <items>
+                        <MenuItem text="Properties" onAction="#onPropertiesClicked"/>
+                        <MenuItem text="Exit" onAction="#onExitClicked"/>
+                    </items>
+                </Menu>
+                <Menu text="Help">
+                    <items>
+                        <MenuItem text="Help" onAction="#onHelpClicked"/>
+                        <MenuItem text="About" onAction="#onAboutClicked"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
     </top>
 
     <!-- CENTER - Maze Canvas -->
     <center>
-        <StackPane>
-            <MazeDisplayer fx:id="mazeDisplayer" width="700" height="400"/>
-            <ImageView fx:id="victoryGif" fitWidth="400" fitHeight="300" visible="false"/>
-        </StackPane>
+        <VBox spacing="10" alignment="CENTER" VBox.vgrow="ALWAYS">
+            <StackPane fx:id="mazeContainer" VBox.vgrow="ALWAYS">
+                <MazeDisplayer fx:id="mazeDisplayer"
+                               StackPane.alignment="CENTER"/>
+                <ImageView fx:id="victoryGif" fitWidth="400" fitHeight="300"
+                           visible="false" StackPane.alignment="CENTER"/>
+            </StackPane>
+        </VBox>
     </center>
 
-    <!-- BOTTOM BAR - Player info -->
+
+    <!-- BOTTOM - Player info -->
     <bottom>
         <HBox spacing="20" alignment="CENTER">
             <Label fx:id="playerRow" text="Row: 0"/>
@@ -31,9 +61,9 @@
         </HBox>
     </bottom>
 
-    <!-- LEFT - Inputs -->
+    <!-- LEFT - Input section -->
     <left>
-        <VBox spacing="10" alignment="TOP_LEFT">
+        <VBox spacing="15" alignment="TOP_LEFT">
             <HBox spacing="5">
                 <Label text="Rows:"/>
                 <TextField fx:id="mazeRows" prefWidth="60"/>
@@ -42,21 +72,20 @@
                 <Label text="Columns:"/>
                 <TextField fx:id="mazeColumns" prefWidth="60"/>
             </HBox>
-            <HBox spacing="10">
-                <Button fx:id="startButton" text="Start" onAction="#onStartClicked"/>
-                <Button fx:id="saveButton" text="💾 Save" onAction="#handleSaveMaze"/>
-                <Button fx:id="loadButton" text="📂 Load" onAction="#handleLoadMaze"/>
-            </HBox>
+            <VBox spacing="10">
+            </VBox>
         </VBox>
     </left>
 
     <!-- RIGHT - Action buttons -->
     <right>
-        <VBox spacing="10" alignment="TOP_RIGHT">
-            <Button fx:id="solveButton" text="Solve Maze" onAction="#solveMaze"/>
-            <Button fx:id="btnShowNextStep" text="Show Next Step" onAction="#showNextStep"/>
-            <Button text="Remove Solution" onAction="#removeSolution"/>
-            <Button text="Remove Next Step" onAction="#removeNextStep"/>
+        <VBox spacing="10" alignment="TOP_RIGHT" prefWidth="160">
+            <Label text="Maze Tools" style="-fx-font-weight: bold; -fx-underline: true;"/>
+            <Button fx:id="solveButton" text="🔍 Solve Maze" onAction="#solveMaze" maxWidth="140"/>
+            <Button text="❌ Remove Solution" onAction="#removeSolution" maxWidth="140"/>
+            <Separator/>
+            <Button fx:id="btnShowNextStep" text="➡️ Show Next Step" onAction="#showNextStep" maxWidth="140"/>
+            <Button text="❌ Remove Next Step" onAction="#removeNextStep" maxWidth="140"/>
         </VBox>
     </right>
 

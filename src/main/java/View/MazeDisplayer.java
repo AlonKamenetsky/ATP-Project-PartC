@@ -30,6 +30,16 @@ public class MazeDisplayer extends Canvas {
     // goal position
     private int goalRow;
     private int goalCol;
+    private Position nextStepPosition;
+    private Image nextStepImage;
+
+    public MazeDisplayer() {
+        try {
+            nextStepImage = new Image(getClass().getResourceAsStream("/Go+Here.png"));
+        } catch (Exception e) {
+            System.out.println("Couldn't load next step image");
+        }
+    }
 
 
     public int getPlayerRow() {
@@ -65,29 +75,6 @@ public class MazeDisplayer extends Canvas {
         draw();
     }
 
-    public String getImageFileNameWall() {
-        return imageFileNameWall.get();
-    }
-
-    public String imageFileNameWallProperty() {
-        return imageFileNameWall.get();
-    }
-
-    public void setImageFileNameWall(String imageFileNameWall) {
-        this.imageFileNameWall.set(imageFileNameWall);
-    }
-
-    public String getImageFileNamePlayer() {
-        return imageFileNamePlayer.get();
-    }
-
-    public String imageFileNamePlayerProperty() {
-        return imageFileNamePlayer.get();
-    }
-
-    public void setImageFileNamePlayer(String imageFileNamePlayer) {
-        this.imageFileNamePlayer.set(imageFileNamePlayer);
-    }
 
     public void drawMaze(Maze maze) {
         this.currentMaze = maze;
@@ -231,19 +218,9 @@ public class MazeDisplayer extends Canvas {
         }
     }
 
-    public void highlightCell(int row, int col, Color color) {
-        double cellHeight = getHeight() / rows;
-        double cellWidth = getWidth() / cols;
-        double x = col * cellWidth;
-        double y = row * cellHeight;
-
-        GraphicsContext gc = getGraphicsContext2D();
-        gc.setFill(color);
-        gc.fillRect(x, y, cellWidth, cellHeight);
-    }
     public void clearSolution() {
         this.solution = null;
-        drawMaze(currentMaze); // redraw maze without solution
+        drawMaze(currentMaze); // redraw maze without a solution
         setPlayerPosition(playerRow, playerCol);
         setEndPoint(goalRow, goalCol);
     }
@@ -269,8 +246,37 @@ public class MazeDisplayer extends Canvas {
             }
         }
     }
+    public void redraw() {
+        if (maze == null)
+            return;
+
+        GraphicsContext gc = getGraphicsContext2D();
+        double cellHeight = getHeight() / maze.getRows();
+        double cellWidth = getWidth() / maze.getCols();
+
+        gc.clearRect(0, 0, getWidth(), getHeight());
+
+        drawMazeBackground(gc, cellHeight, cellWidth, maze.getRows(), maze.getCols());
+        drawMazeWalls(gc, cellHeight, cellWidth, maze.getRows(), maze.getCols());
+
+        if (nextStepPosition != null && nextStepImage != null) {
+            double x = nextStepPosition.getColumnIndex() * cellWidth;
+            double y = nextStepPosition.getRowIndex() * cellHeight;
+            gc.drawImage(nextStepImage, x, y, cellWidth, cellHeight);
+        }
+        drawSolution(gc, cellHeight, cellWidth);
+        drawPlayer(gc, cellHeight, cellWidth);
+        drawEndPoint(gc, cellHeight, cellWidth);
+    }
 
 
+    public void showNextStepImage(int row, int col) {
+        this.nextStepPosition = new Position(row, col);
+        redraw();
+    }
 
-
+    public void removeNextStepImage() {
+        this.nextStepPosition = null;
+        redraw();
+    }
 }
