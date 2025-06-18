@@ -5,6 +5,7 @@ import Model.MovementDirection;
 import algorithms.mazeGenerators.Maze;
 import algorithms.search.Solution;
 import javafx.scene.input.KeyEvent;
+
 import java.util.Observable;
 import java.util.Observer;
 
@@ -22,6 +23,7 @@ public class MyViewModel extends Observable implements Observer {
         setChanged();
         notifyObservers(arg);
     }
+
     public void movePlayer(KeyEvent keyEvent) {
         MovementDirection direction = null;
 
@@ -30,7 +32,9 @@ public class MyViewModel extends Observable implements Observer {
             case DOWN -> direction = MovementDirection.DOWN;
             case LEFT -> direction = MovementDirection.LEFT;
             case RIGHT -> direction = MovementDirection.RIGHT;
-            default -> { return; }
+            default -> {
+                return;
+            }
         }
         setChanged();
         notifyObservers("playerMoved");
@@ -38,27 +42,42 @@ public class MyViewModel extends Observable implements Observer {
 
 
     }
-    public int getPlayerRow(){
+
+    public void movePlayer(MovementDirection direction) {
+        model.updatePlayerLocation(direction);
+        setChanged();
+        notifyObservers("playerMoved");
+    }
+
+    public int getPlayerRow() {
         return model.getPlayerRow();
     }
 
-    public int getPlayerCol(){
+    public int getPlayerCol() {
         return model.getPlayerCol();
     }
 
-    public Solution getSolution(){
+    public Solution getSolution() {
         return model.getSolution();
     }
 
-    public void generateMaze(int rows, int cols){
+    public void generateMaze(int rows, int cols) {
         model.generateMaze(rows, cols);
     }
 
-    public void solveMaze(){
+    public void solveMaze() {
         model.solveMaze();
     }
 
-    public Maze getMaze(){
+    public Maze getMaze() {
         return model.getMaze();
+    }
+
+    public int getEndPointRow() {
+        return model.getEndPoint().getRowIndex();
+    }
+
+    public int getEndPointCol() {
+        return model.getEndPoint().getColumnIndex();
     }
 }

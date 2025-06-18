@@ -8,34 +8,40 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import javafx.scene.input.KeyEvent;
+
 
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Load FXML
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/MyView.fxml"));
         Parent root = loader.load();
 
-        // Initialize Model and ViewModel
         MyModel model = new MyModel();
         MyViewModel viewModel = new MyViewModel(model);
 
-        // Inject ViewModel into Controller
         MyViewController controller = loader.getController();
         controller.setViewModel(viewModel);
+
         Scene scene = new Scene(root);
-        scene.setOnKeyPressed(event -> {
-            controller.handleKeyPress(event); // Delegate to your controller
-        });
         scene.getStylesheets().add(getClass().getResource("/View/MainStyle.css").toExternalForm());
+
+        // ✅ Global key handler that PREVENTS TextField interference
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            switch (event.getCode()) {
+                case UP, DOWN, LEFT, RIGHT -> {
+                    controller.handleKeyPress(event); // your method already expects a KeyEvent
+                    event.consume(); // block TextField default behavior
+                }
+            }
+        });
+
         primaryStage.setTitle("Maze App");
-        primaryStage.setScene(scene); // ✅ reuse the same Scene
+        primaryStage.setScene(scene);
         primaryStage.show();
-        root.requestFocus();
-
-
     }
+
 
     public static void main(String[] args) {
         launch(args);

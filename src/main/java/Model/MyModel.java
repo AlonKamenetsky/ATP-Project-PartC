@@ -1,14 +1,17 @@
 package Model;
+
 import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.MyMazeGenerator;
 import algorithms.mazeGenerators.Position;
-import algorithms.search.Solution;
+import algorithms.search.*;
+
 import java.util.Observable;
 import java.util.Observer;
 
 public class MyModel extends Observable implements IModel {
     private Maze maze;
     private Position playerPosition;
+    private Position endPoint;
     private MyMazeGenerator myMazeGenerator;
     private Solution solution;
     private int playerRow;
@@ -39,6 +42,22 @@ public class MyModel extends Observable implements IModel {
             case DOWN -> newRow++;
             case LEFT -> newCol--;
             case RIGHT -> newCol++;
+            case UP_LEFT -> {
+                newRow--;
+                newCol--;
+            }
+            case UP_RIGHT -> {
+                newRow--;
+                newCol++;
+            }
+            case DOWN_LEFT -> {
+                newRow++;
+                newCol--;
+            }
+            case DOWN_RIGHT -> {
+                newRow++;
+                newCol++;
+            }
         }
 
         movePlayer(newRow, newCol);
@@ -94,9 +113,20 @@ public class MyModel extends Observable implements IModel {
 
     @Override
     public void solveMaze() {
-        solution = new Solution();
+        if (maze == null)
+            return;
 
+        // Use current player position
+        Position current = new Position(playerRow, playerCol);
+
+        Maze dynamicMaze = new Maze(maze.toByteArray()); // Make a copy
+        dynamicMaze.setStartPosition(current);
+
+        ISearchable searchableMaze = new SearchableMaze(dynamicMaze);
+        ISearchingAlgorithm solver = new BreadthFirstSearch();
+        this.solution = solver.solve(searchableMaze);
     }
+
     @Override
     public void assignObserver(Observer o) {
         this.addObserver(o);
@@ -110,5 +140,10 @@ public class MyModel extends Observable implements IModel {
     @Override
     public Maze getMaze() {
         return maze;
+    }
+
+    @Override
+    public Position getEndPoint() {
+        return endPoint;
     }
 }

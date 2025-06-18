@@ -31,4 +31,15 @@
     <Label fx:id="playerRow" layoutX="50" layoutY="520" text="Row: 0"/>
     <Label fx:id="playerCol" layoutX="150" layoutY="520" text="Col: 0"/>
 
+    <Button fx:id="solveButton" layoutX="620" layoutY="15" text="Solve Maze" onAction="#solveMaze"/>
+    <Button fx:id="btnShowNextStep" layoutX="620" layoutY="45" text="Show Next Step" onAction="#showNextStep"/>
+
+
+    <Label layoutX="460" layoutY="550" text="|"/>
+
+    <!-- New remove buttons -->
+    <Button text="Remove Solution" onAction="#removeSolution" layoutX="720" layoutY="15"/>
+    <Button text="Remove Next Step" onAction="#removeNextStep" layoutX="720" layoutY="45"/>
+
+
 </AnchorPane>
