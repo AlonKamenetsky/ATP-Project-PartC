@@ -1,49 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 <?import View.MazeDisplayer?>
 
-<?import javafx.scene.image.ImageView?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="View.MyViewController"
-            prefHeight="600.0" prefWidth="800.0">
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="View.MyViewController"
+            prefHeight="600.0" prefWidth="800.0" style="-fx-padding: 20;">
 
-    <!-- Title Label -->
-    <Label layoutX="20" layoutY="10" text="Maze Game"
-           style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    <!-- TOP BAR - TITLE -->
+    <top>
+        <Label text="Maze Game"
+               style="-fx-font-size: 24px; -fx-font-weight: bold;"
+               BorderPane.alignment="CENTER"/>
+    </top>
 
-    <!-- Row input -->
-    <Label layoutX="50" layoutY="50" text="Rows:"/>
-    <TextField fx:id="mazeRows" layoutX="100" layoutY="45" prefWidth="60"/>
+    <!-- CENTER - Maze Canvas -->
+    <center>
+        <StackPane>
+            <MazeDisplayer fx:id="mazeDisplayer" width="700" height="400"/>
+            <ImageView fx:id="victoryGif" fitWidth="400" fitHeight="300" visible="false"/>
+        </StackPane>
+    </center>
 
-    <!-- Column input -->
-    <Label layoutX="180" layoutY="50" text="Columns:"/>
-    <TextField fx:id="mazeColumns" layoutX="260" layoutY="45" prefWidth="60"/>
+    <!-- BOTTOM BAR - Player info -->
+    <bottom>
+        <HBox spacing="20" alignment="CENTER">
+            <Label fx:id="playerRow" text="Row: 0"/>
+            <Label fx:id="playerCol" text="Col: 0"/>
+        </HBox>
+    </bottom>
 
-    <!-- Start Button -->
-    <Button fx:id="startButton" text="Start" layoutX="340" layoutY="45" onAction="#onStartClicked"/>
+    <!-- LEFT - Inputs -->
+    <left>
+        <VBox spacing="10" alignment="TOP_LEFT">
+            <HBox spacing="5">
+                <Label text="Rows:"/>
+                <TextField fx:id="mazeRows" prefWidth="60"/>
+            </HBox>
+            <HBox spacing="5">
+                <Label text="Columns:"/>
+                <TextField fx:id="mazeColumns" prefWidth="60"/>
+            </HBox>
+            <HBox spacing="10">
+                <Button fx:id="startButton" text="Start" onAction="#onStartClicked"/>
+                <Button fx:id="saveButton" text="💾 Save" onAction="#handleSaveMaze"/>
+                <Button fx:id="loadButton" text="📂 Load" onAction="#handleLoadMaze"/>
+            </HBox>
+        </VBox>
+    </left>
 
-    <!-- Maze Display Canvas -->
-    <MazeDisplayer fx:id="mazeDisplayer" layoutX="50" layoutY="100" width="700" height="400"/>
+    <!-- RIGHT - Action buttons -->
+    <right>
+        <VBox spacing="10" alignment="TOP_RIGHT">
+            <Button fx:id="solveButton" text="Solve Maze" onAction="#solveMaze"/>
+            <Button fx:id="btnShowNextStep" text="Show Next Step" onAction="#showNextStep"/>
+            <Button text="Remove Solution" onAction="#removeSolution"/>
+            <Button text="Remove Next Step" onAction="#removeNextStep"/>
+        </VBox>
+    </right>
 
-    <!-- Player Info Labels -->
-    <Label fx:id="playerRow" layoutX="50" layoutY="520" text="Row: 0"/>
-    <Label fx:id="playerCol" layoutX="150" layoutY="520" text="Col: 0"/>
-
-    <Button fx:id="solveButton" layoutX="620" layoutY="15" text="Solve Maze" onAction="#solveMaze"/>
-    <Button fx:id="btnShowNextStep" layoutX="620" layoutY="45" text="Show Next Step" onAction="#showNextStep"/>
-
-
-    <Label layoutX="460" layoutY="550" text="|"/>
-
-    <!-- New remove buttons -->
-    <Button text="Remove Solution" onAction="#removeSolution" layoutX="720" layoutY="15"/>
-    <Button text="Remove Next Step" onAction="#removeNextStep" layoutX="720" layoutY="45"/>
-
-    <ImageView fx:id="victoryGif" layoutX="200" layoutY="100" fitWidth="400" fitHeight="300" visible="false"/>
-
-
-
-</AnchorPane>
+</BorderPane>

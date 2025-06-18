@@ -4,6 +4,8 @@ import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Observer;
 
 public interface IModel {
@@ -34,6 +36,10 @@ public interface IModel {
     public Maze getMaze();
 
     public Position getEndPoint();
+
+    public void loadMazeFromFile(File file) throws FileNotFoundException;
+
+    public void saveMazeToFile(File file) throws FileNotFoundException;
 
 
 }

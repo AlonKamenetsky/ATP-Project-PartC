@@ -5,6 +5,7 @@ import algorithms.mazeGenerators.MyMazeGenerator;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.*;
 
+import java.io.*;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -145,5 +146,26 @@ public class MyModel extends Observable implements IModel {
     @Override
     public Position getEndPoint() {
         return endPoint;
+    }
+
+    public void saveMazeToFile(File file) throws FileNotFoundException {
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(maze.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public void loadMazeFromFile(File file) throws FileNotFoundException {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] bytes = fis.readAllBytes();
+            this.maze = new Maze(bytes);
+            this.playerPosition = maze.getStartPosition();
+            this.playerRow = playerPosition.getRowIndex();
+            this.playerCol = playerPosition.getColumnIndex();
+            notifyObservers("maze loaded");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

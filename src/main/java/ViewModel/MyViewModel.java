@@ -6,6 +6,8 @@ import algorithms.mazeGenerators.Maze;
 import algorithms.search.Solution;
 import javafx.scene.input.KeyEvent;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -80,4 +82,22 @@ public class MyViewModel extends Observable implements Observer {
     public int getEndPointCol() {
         return model.getEndPoint().getColumnIndex();
     }
+
+    public void saveMaze(File file) {
+        try {
+            model.saveMazeToFile(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadMaze(File file) {
+        try {
+            model.loadMazeFromFile(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

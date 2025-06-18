@@ -18,12 +18,11 @@ import javafx.scene.input.KeyEvent;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 import java.awt.event.ActionEvent;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
@@ -255,6 +254,7 @@ public class MyViewController implements Initializable, Observer {
         });
     }
 
+
     private Position parsePosition(String state) {
         // Assumes format: "{row,col}"
         String[] parts = state.replaceAll("[{}]", "").split(",");
@@ -300,13 +300,21 @@ public class MyViewController implements Initializable, Observer {
         pause.play();
     }
 
+    public void handleSaveMaze(javafx.event.ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Maze");
+        File file = fileChooser.showSaveDialog(null);
+        if (file != null) {
+            viewModel.saveMaze(file);
+        }
+    }
 
-
-
-
-
-
-
-
-
+    public void handleLoadMaze(javafx.event.ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load Maze");
+        File file = fileChooser.showOpenDialog(null);
+        if (file != null) {
+            viewModel.loadMaze(file);
+        }
+    }
 }
