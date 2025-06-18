@@ -1,21 +1,51 @@
 .root {
-    -fx-background-color: lightgrey;
+    -fx-background-color: linear-gradient(to bottom right, #e0e0e0, #c8d0d8);
+    -fx-font-family: "Segoe UI", "Arial Narrow", sans-serif;
 }
 
-Button {
+/* כפתורים */
+.button {
     -fx-text-fill: white;
-    -fx-font-family: "Arial Narrow";
     -fx-font-weight: bold;
+    -fx-font-size: 14px;
     -fx-background-color: linear-gradient(#61a2b1, #2A5058);
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0.0, 0, 1);
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 5, 0.0, 0, 2);
 }
 
-Button:hover {
-    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
-    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
-    -fx-background-radius: 3px, 3px, 2px, 1px;
-    -fx-padding: 0.333333em 0.666667em 0.333333em 0.666667em; /* 4 8 4 8 */
-    -fx-text-fill: -fx-text-base-color;
-    -fx-alignment: CENTER;
-    -fx-content-display: LEFT;
+.button:hover {
+    -fx-background-color: linear-gradient(#74b8c2, #3a6a75);
+    -fx-cursor: hand;
+}
+
+/* שדות טקסט */
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #a0a0a0;
+    -fx-border-radius: 5;
+    -fx-padding: 6;
+    -fx-font-size: 13px;
+}
+
+/* תוויות */
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+}
+
+/* MazeDisplayer גבול */
+#mazeDisplayer {
+    -fx-border-color: #444;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+    -fx-background-color: #f9f9f9;
+}
+
+/* הודעת ניצחון */
+#victoryGif {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 10, 0.5, 0, 0);
+    -fx-border-color: gold;
+    -fx-border-width: 4;
+    -fx-border-radius: 10;
 }
