@@ -12,6 +12,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -19,6 +21,9 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.awt.event.ActionEvent;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
@@ -49,6 +54,9 @@ public class MyViewController implements Initializable, Observer {
     private Label playerCol;
     @FXML
     private TextField mazeRows;
+    @FXML
+    private ImageView victoryGif;
+
 
     @FXML
     private TextField mazeColumns;
@@ -111,7 +119,9 @@ public class MyViewController implements Initializable, Observer {
         String change = (String) arg;
         switch (change) {
             case "mazeGenerated" -> mazeGenerated();
-            case "playerMoved" -> playerMoved();
+            case "playerMoved" -> {
+                playerMoved();
+            }
             case "mazeSolved" -> mazeSolved();
             default -> System.out.println("Not implemented change: " + change);
         }
@@ -124,23 +134,28 @@ public class MyViewController implements Initializable, Observer {
     private void playerMoved() {
         setPlayerPosition(viewModel.getPlayerRow(), viewModel.getPlayerCol());
 
-        // Clear highlighted next step
         nextStepVisible = false;
         highlightedPosition = null;
 
-        // Check win
         if (viewModel.getPlayerRow() == viewModel.getMaze().getGoalPosition().getRowIndex() &&
                 viewModel.getPlayerCol() == viewModel.getMaze().getGoalPosition().getColumnIndex()) {
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Maze Completed");
-            alert.setHeaderText(null);
-            alert.setContentText("🎉 You reached the goal! Well done!");
-            alert.showAndWait();
-            mazeDisplayer.getGraphicsContext2D().clearRect(0, 0,
-                    mazeDisplayer.getWidth(), mazeDisplayer.getHeight());
+            try {
+                mazeDisplayer.setVisible(false);
+                InputStream gifStream = getClass().getResourceAsStream("/victory.gif");
+                if (gifStream == null) {
+                    System.out.println("GIF not found!");
+                    return;
+                }
+                Image gif = new Image(gifStream);
+                victoryGif.setImage(gif);
+                victoryGif.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
+
 
 
 
@@ -244,10 +259,6 @@ public class MyViewController implements Initializable, Observer {
         });
     }
 
-
-
-
-
     private Position parsePosition(String state) {
         // Assumes format: "{row,col}"
         String[] parts = state.replaceAll("[{}]", "").split(",");
@@ -270,8 +281,6 @@ public class MyViewController implements Initializable, Observer {
             mazeDisplayer.requestFocus();
         });
     }
-
-
 
     @FXML
     public void removeNextStep() {

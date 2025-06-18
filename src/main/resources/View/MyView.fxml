@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import View.MazeDisplayer?>
 
+<?import javafx.scene.image.ImageView?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="View.MyViewController"
             prefHeight="600.0" prefWidth="800.0">
 
@@ -40,6 +41,9 @@
     <!-- New remove buttons -->
     <Button text="Remove Solution" onAction="#removeSolution" layoutX="720" layoutY="15"/>
     <Button text="Remove Next Step" onAction="#removeNextStep" layoutX="720" layoutY="45"/>
+
+    <ImageView fx:id="victoryGif" layoutX="200" layoutY="100" fitWidth="400" fitHeight="300" visible="false"/>
+
 
 
 </AnchorPane>
