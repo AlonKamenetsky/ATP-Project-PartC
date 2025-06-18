@@ -109,6 +109,7 @@ public class MazeDisplayer extends Canvas {
             GraphicsContext gc = getGraphicsContext2D();
             gc.clearRect(0, 0, canvasWidth, canvasHeight);
 
+            drawMazeBackground(gc, cellHeight, cellWidth, rows, cols);
             drawMazeWalls(gc, cellHeight, cellWidth, rows, cols);
             if (solution != null)
                 drawSolution(gc, cellHeight, cellWidth);
@@ -119,16 +120,12 @@ public class MazeDisplayer extends Canvas {
 
 
     private void drawMazeWalls(GraphicsContext gc, double cellHeight, double cellWidth, int rows, int cols) {
-        gc.setFill(Color.RED);
 
         Image wallImage = null;
         try {
-            //  wallImage = new Image(new FileInputStream(getImageFileNameWall()));
-            if (getImageFileNameWall() != null)
-                wallImage = new Image(new FileInputStream(getImageFileNameWall()));
-
-        } catch (FileNotFoundException e) {
-            System.out.println("There is no wall image file");
+            wallImage = new Image(getClass().getResourceAsStream("/grass.png"));
+        } catch (Exception e) {
+            System.out.println("Couldn't load wall image");
         }
 
         for (int i = 0; i < rows; i++) {
@@ -138,54 +135,60 @@ public class MazeDisplayer extends Canvas {
                     double y = i * cellHeight;
                     if (wallImage == null)
                         gc.fillRect(x, y, cellWidth, cellHeight);
-                    else
+                    else{
+                        gc.setFill(Color.BLACK);
                         gc.drawImage(wallImage, x, y, cellWidth, cellHeight);
+                    }
+
                 }
             }
         }
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(5.0);
+        gc.strokeRect(0, 0, cols * cellWidth, rows * cellHeight);
     }
 
 
     private void drawPlayer(GraphicsContext graphicsContext, double cellHeight, double cellWidth) {
         double x = getPlayerCol() * cellWidth;
         double y = getPlayerRow() * cellHeight;
-        graphicsContext.setFill(Color.GREEN);
 
         Image playerImage = null;
         try {
-            //  playerImage = new Image (new FileInputStream(getImageFileNamePlayer()));
-            if (getImageFileNamePlayer() != null)
-                playerImage = new Image(new FileInputStream(getImageFileNamePlayer()));
-
-        } catch (FileNotFoundException e) {
+            playerImage = new Image(getClass().getResourceAsStream("/player.png"));
+        } catch (Exception e) {
             System.out.println("There is no player image file");
         }
-        if (playerImage == null)
+
+        if (playerImage == null) {
+            graphicsContext.setFill(Color.GREEN);
             graphicsContext.fillRect(x, y, cellWidth, cellHeight);
-        else
+        } else {
             graphicsContext.drawImage(playerImage, x, y, cellWidth, cellHeight);
+        }
     }
+
 
     private void drawEndPoint(GraphicsContext graphicsContext, double cellHeight, double cellWidth) {
         double y = maze.getGoalPosition().getRowIndex() * cellHeight;
         double x = maze.getGoalPosition().getColumnIndex() * cellWidth;
-        graphicsContext.setFill(Color.BLUE);
 
         Image endPointImage = null;
         try {
-            //  playerImage = new Image (new FileInputStream(getImageFileNamePlayer()));
-            if (getImageFileNamePlayer() != null)
-                endPointImage = new Image(new FileInputStream(getImageFileNamePlayer()));
-
-        } catch (FileNotFoundException e) {
-            System.out.println("There is no player image file");
+            endPointImage = new Image(getClass().getResourceAsStream("/goal.png"));
+        } catch (Exception e) {
+            System.out.println("There is no goal image file");
         }
-        if (endPointImage == null)
-            graphicsContext.fillRect(x, y, cellWidth, cellHeight);
-        else
-            graphicsContext.drawImage(endPointImage, x, y, cellWidth, cellHeight);
 
+        if (endPointImage == null) {
+            graphicsContext.setFill(Color.BLUE);
+            graphicsContext.fillRect(x, y, cellWidth, cellHeight);
+        }
+        else {
+            graphicsContext.drawImage(endPointImage, x, y, cellWidth, cellHeight);
+        }
     }
+
 
     private void drawSolution(GraphicsContext gc, double cellHeight, double cellWidth) {
         if (solution == null || solution.getSolutionPath().size() < 2)
@@ -244,6 +247,29 @@ public class MazeDisplayer extends Canvas {
         setPlayerPosition(playerRow, playerCol);
         setEndPoint(goalRow, goalCol);
     }
+
+    private void drawMazeBackground(GraphicsContext gc, double cellHeight, double cellWidth, int rows, int cols) {
+        Image backgroundImage = null;
+        try {
+            backgroundImage = new Image(getClass().getResourceAsStream("/background.png"));
+        } catch (Exception e) {
+            System.out.println("Couldn't load background image");
+        }
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                double x = j * cellWidth;
+                double y = i * cellHeight;
+                if (backgroundImage != null)
+                    gc.drawImage(backgroundImage, x, y, cellWidth, cellHeight);
+                else {
+                    gc.setFill(Color.WHITE); // fallback
+                    gc.fillRect(x, y, cellWidth, cellHeight);
+                }
+            }
+        }
+    }
+
 
 
 

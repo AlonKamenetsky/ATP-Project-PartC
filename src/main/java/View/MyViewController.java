@@ -155,10 +155,6 @@ public class MyViewController implements Initializable, Observer {
             }
         }
     }
-
-
-
-
     private void mazeGenerated() {
         mazeDisplayer.drawMaze(viewModel.getMaze());
     }
