@@ -10,6 +10,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,6 +34,8 @@ public class MazeDisplayer extends Canvas {
     private int goalCol;
     private Position nextStepPosition;
     private Image nextStepImage;
+    private Image footstepImage;
+
 
     public MazeDisplayer() {
         try {
@@ -181,15 +185,10 @@ public class MazeDisplayer extends Canvas {
         if (solution == null || solution.getSolutionPath().size() < 2)
             return;
 
-        gc.setStroke(Color.YELLOW);
-        gc.setLineWidth(2);
-
         List<AState> path = solution.getSolutionPath();
-
 
         int playerRow = getPlayerRow();
         int playerCol = getPlayerCol();
-
 
         int startIndex = -1;
         for (int i = 0; i < path.size(); i++) {
@@ -200,10 +199,14 @@ public class MazeDisplayer extends Canvas {
             }
         }
 
-        if (startIndex == -1 || startIndex == path.size() - 1) {
-
+        if (startIndex == -1 || startIndex >= path.size() - 1)
             return;
-        }
+
+        gc.setLineCap(StrokeLineCap.ROUND);
+        gc.setLineJoin(StrokeLineJoin.ROUND);
+        gc.setLineWidth(5);
+
+        gc.setStroke(new Color(1.0, 1.0, 0.0, 0.6));
 
         for (int i = startIndex; i < path.size() - 1; i++) {
             Position from = parsePosition(path.get(i));
@@ -217,6 +220,8 @@ public class MazeDisplayer extends Canvas {
             gc.strokeLine(x1, y1, x2, y2);
         }
     }
+
+
 
     public void clearSolution() {
         this.solution = null;

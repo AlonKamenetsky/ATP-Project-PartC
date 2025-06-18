@@ -4,6 +4,8 @@ import Model.IModel;
 import Model.MovementDirection;
 import algorithms.mazeGenerators.Maze;
 import algorithms.search.Solution;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.input.KeyEvent;
 
 import java.io.File;
@@ -98,6 +100,11 @@ public class MyViewModel extends Observable implements Observer {
             e.printStackTrace();
         }
     }
+    public boolean shouldShowVictorySequence() {
+        return model.shouldShowVictorySequence();
+    }
+
+
 
 
 }

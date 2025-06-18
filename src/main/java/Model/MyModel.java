@@ -4,6 +4,7 @@ import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.MyMazeGenerator;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.*;
+import javafx.application.Platform;
 
 import java.io.*;
 import java.util.Observable;
@@ -17,6 +18,8 @@ public class MyModel extends Observable implements IModel {
     private Solution solution;
     private int playerRow;
     private int playerCol;
+    private boolean showVictorySequence = false;
+
 
     public MyModel() {
         myMazeGenerator = new MyMazeGenerator();
@@ -79,10 +82,13 @@ public class MyModel extends Observable implements IModel {
         if (isWalkable(newRow, newCol)) {
             playerRow = newRow;
             playerCol = newCol;
+            showVictorySequence = playerRow == maze.getGoalPosition().getRowIndex() &&
+                    playerCol == maze.getGoalPosition().getColumnIndex();
             setChanged();
             notifyObservers("playerMoved");
         }
     }
+
 
 
     public boolean isAtGoal() {
@@ -168,4 +174,10 @@ public class MyModel extends Observable implements IModel {
             throw new RuntimeException(e);
         }
     }
+    @Override
+    public boolean shouldShowVictorySequence() {
+        return showVictorySequence;
+    }
+
+
 }

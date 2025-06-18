@@ -9,10 +9,7 @@ import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -26,6 +23,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 
@@ -140,24 +138,13 @@ public class MyViewController implements Initializable, Observer {
         nextStepVisible = false;
         highlightedPosition = null;
 
-        if (viewModel.getPlayerRow() == viewModel.getMaze().getGoalPosition().getRowIndex() &&
-                viewModel.getPlayerCol() == viewModel.getMaze().getGoalPosition().getColumnIndex()) {
-
-            try {
-                mazeDisplayer.setVisible(false);
-                InputStream gifStream = getClass().getResourceAsStream("/victory.gif");
-                if (gifStream == null) {
-                    System.out.println("GIF not found!");
-                    return;
-                }
-                Image gif = new Image(gifStream);
-                victoryGif.setImage(gif);
-                victoryGif.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (viewModel.shouldShowVictorySequence()) {
+            showVictoryGIFThenDialog();
         }
     }
+
+
+
     private void mazeGenerated() {
         mazeDisplayer.drawMaze(viewModel.getMaze());
     }
@@ -315,6 +302,7 @@ public class MyViewController implements Initializable, Observer {
             viewModel.loadMaze(file);
         }
     }
+
     @FXML
     private void onNewClicked() {
         TextInputDialog dialog = new TextInputDialog("10x10");
@@ -382,4 +370,49 @@ public class MyViewController implements Initializable, Observer {
         alert.setContentText("Maze App was created as a demo project by Shay Smertenko and Alon Kamenetsky. Version 1.0");
         alert.showAndWait();
     }
+    private void showVictoryGIFThenDialog() {
+        mazeDisplayer.setVisible(false);
+        try {
+            InputStream gifStream = getClass().getResourceAsStream("/victory.gif");
+            if (gifStream == null) {
+                System.out.println("GIF not found!");
+                return;
+            }
+            Image gif = new Image(gifStream);
+            victoryGif.setImage(gif);
+            victoryGif.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(5));
+        pause.setOnFinished(e -> {
+            victoryGif.setVisible(false);
+            mazeDisplayer.setVisible(true);
+
+
+            Platform.runLater(this::showVictoryDialog);
+        });
+        pause.play();
+    }
+
+
+    private void showVictoryDialog() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Victory!");
+        alert.setHeaderText("You solved the maze!");
+        alert.setContentText("Would you like to play again or exit the game?");
+        ButtonType newGame = new ButtonType("New Game");
+        ButtonType exit = new ButtonType("Exit");
+        alert.getButtonTypes().setAll(newGame, exit);
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == newGame) {
+                onNewClicked();
+            } else if (response == exit) {
+                Platform.exit();
+            }
+        });
+    }
+
 }
