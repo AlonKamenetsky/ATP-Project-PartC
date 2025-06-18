@@ -19,6 +19,9 @@ public class MyModel extends Observable implements IModel {
     private int playerRow;
     private int playerCol;
     private boolean showVictorySequence = false;
+    private int stepCount = 0;
+    private long startTime = 0;
+
 
 
     public MyModel() {
@@ -31,10 +34,13 @@ public class MyModel extends Observable implements IModel {
         playerPosition = maze.getStartPosition();
         playerRow = playerPosition.getRowIndex();
         playerCol = playerPosition.getColumnIndex();
+        stepCount = 0;
+        startTime = System.currentTimeMillis();
         setChanged();
         notifyObservers("mazeGenerated");
         movePlayer(playerRow, playerCol);
     }
+
 
 
     public void updatePlayerLocation(MovementDirection direction) {
@@ -84,6 +90,7 @@ public class MyModel extends Observable implements IModel {
             playerCol = newCol;
             showVictorySequence = playerRow == maze.getGoalPosition().getRowIndex() &&
                     playerCol == maze.getGoalPosition().getColumnIndex();
+            stepCount++;
             setChanged();
             notifyObservers("playerMoved");
         }
@@ -177,6 +184,15 @@ public class MyModel extends Observable implements IModel {
     @Override
     public boolean shouldShowVictorySequence() {
         return showVictorySequence;
+    }
+    @Override
+    public int getStepCount() {
+        return stepCount;
+    }
+
+    @Override
+    public long getElapsedTimeInSeconds() {
+        return (System.currentTimeMillis() - startTime) / 1000;
     }
 
 

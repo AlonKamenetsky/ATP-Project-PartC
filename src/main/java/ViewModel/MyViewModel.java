@@ -103,8 +103,11 @@ public class MyViewModel extends Observable implements Observer {
     public boolean shouldShowVictorySequence() {
         return model.shouldShowVictorySequence();
     }
+    public int getStepCount() {
+        return model.getStepCount();
+    }
 
-
-
-
+    public long getElapsedTimeInSeconds() {
+        return model.getElapsedTimeInSeconds();
+    }
 }

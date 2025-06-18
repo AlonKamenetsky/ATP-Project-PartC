@@ -52,7 +52,6 @@
         </VBox>
     </center>
 
-
     <!-- BOTTOM - Player info -->
     <bottom>
         <HBox spacing="20" alignment="CENTER">
@@ -61,7 +60,7 @@
         </HBox>
     </bottom>
 
-    <!-- LEFT - Input section -->
+    <!-- LEFT - Input section + Timer + Steps -->
     <left>
         <VBox spacing="15" alignment="TOP_LEFT">
             <HBox spacing="5">
@@ -72,8 +71,12 @@
                 <Label text="Columns:"/>
                 <TextField fx:id="mazeColumns" prefWidth="60"/>
             </HBox>
-            <VBox spacing="10">
-            </VBox>
+
+            <!-- NEW: Step counter -->
+            <Label fx:id="stepCounter" text="🚶 Steps: 0" style="-fx-font-size: 14px;"/>
+
+            <!-- NEW: Timer -->
+            <Label fx:id="timeCounter" text="⏱ Time: 0s" style="-fx-font-size: 14px;"/>
         </VBox>
     </left>
 

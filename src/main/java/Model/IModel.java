@@ -42,6 +42,9 @@ public interface IModel {
     public void saveMazeToFile(File file) throws FileNotFoundException;
 
     public boolean shouldShowVictorySequence();
+     public int getStepCount();
+
+    public long getElapsedTimeInSeconds();
 
 
 

@@ -9,12 +9,10 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.List;
 
 public class MazeDisplayer extends Canvas {
@@ -34,7 +32,8 @@ public class MazeDisplayer extends Canvas {
     private int goalCol;
     private Position nextStepPosition;
     private Image nextStepImage;
-    private Image footstepImage;
+
+
 
 
     public MazeDisplayer() {

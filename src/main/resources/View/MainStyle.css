@@ -34,6 +34,17 @@
     -fx-text-fill: #333;
 }
 
+.label#timeCounter,
+.label#stepCounter {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-background-color: #ecf0f1;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 5;
+    -fx-padding: 4 10;
+}
+
 /* MazeDisplayer גבול */
 #mazeDisplayer {
     -fx-border-color: #444;
@@ -49,6 +60,7 @@
     -fx-border-width: 4;
     -fx-border-radius: 10;
 }
+
 .menu-bar {
     -fx-background-color: linear-gradient(#f2f2f2, #cccccc);
 }
@@ -61,4 +73,3 @@
 .menu-item {
     -fx-padding: 5 20 5 20;
 }
-
