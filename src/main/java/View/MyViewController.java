@@ -247,12 +247,23 @@ public class MyViewController implements Initializable, Observer {
     }
 
     public void handleSaveMaze(javafx.event.ActionEvent actionEvent) {
+        if (viewModel.getMaze() == null) {
+            showAlert("Save Failed", "Maze is not initialized. Please generate or load a maze first.");
+            return;
+        }
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Maze");
         File file = fileChooser.showSaveDialog(null);
         if (file != null) {
             viewModel.saveMaze(file);
         }
+    }
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     public void handleLoadMaze(javafx.event.ActionEvent actionEvent) {

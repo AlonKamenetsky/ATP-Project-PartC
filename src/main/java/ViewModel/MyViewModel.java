@@ -4,6 +4,7 @@ import Model.IModel;
 import Model.MovementDirection;
 import algorithms.mazeGenerators.Maze;
 import algorithms.search.Solution;
+import javafx.scene.control.Alert;
 import javafx.scene.input.KeyEvent;
 import java.io.File;
 import java.io.IOException;
@@ -85,10 +86,22 @@ public class MyViewModel extends Observable implements Observer {
     public void saveMaze(File file) {
         try {
             model.saveMazeToFile(file);
+        } catch (IllegalStateException e) {
+            showAlert("Save Failed", "Maze is not initialized. Please generate or load a maze first.");
         } catch (IOException e) {
+            showAlert("Save Failed", "An error occurred while saving the maze.");
             e.printStackTrace();
         }
     }
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+
 
     public void loadMaze(File file) {
         try {

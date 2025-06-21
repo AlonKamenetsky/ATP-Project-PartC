@@ -162,6 +162,9 @@ public class MyModel extends Observable implements IModel {
     }
 
     public void saveMazeToFile(File file) throws FileNotFoundException {
+        if(this.maze == null){
+            throw new IllegalStateException("Maze is null");
+        }
         try (FileOutputStream fos = new FileOutputStream(file)) {
             byte[] data = maze.toByteArray();
             fos.write(data);
