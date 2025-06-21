@@ -261,6 +261,12 @@ public class MyViewController implements Initializable, Observer {
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             viewModel.loadMaze(file);
+            Maze maze = viewModel.getMaze();
+            mazeDisplayer.drawMaze(maze);
+            mazeDisplayer.setPlayerPosition(viewModel.getPlayerRow(), viewModel.getPlayerCol());
+            mazeDisplayer.setEndPoint(viewModel.getEndPointRow(), viewModel.getEndPointCol());
+
+            Platform.runLater(() -> mazeDisplayer.requestFocus());
         }
     }
 

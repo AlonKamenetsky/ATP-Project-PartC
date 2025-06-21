@@ -163,7 +163,9 @@ public class MyModel extends Observable implements IModel {
 
     public void saveMazeToFile(File file) throws FileNotFoundException {
         try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write(maze.toByteArray());
+            byte[] data = maze.toByteArray();
+            fos.write(data);
+            fos.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -176,6 +178,7 @@ public class MyModel extends Observable implements IModel {
             this.playerPosition = maze.getStartPosition();
             this.playerRow = playerPosition.getRowIndex();
             this.playerCol = playerPosition.getColumnIndex();
+            this.endPoint = maze.getGoalPosition();
             notifyObservers("maze loaded");
         } catch (IOException e) {
             throw new RuntimeException(e);
