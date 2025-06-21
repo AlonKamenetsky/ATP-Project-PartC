@@ -21,19 +21,24 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.AudioClip;
 import java.io.*;
 import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Optional;
 import java.util.ResourceBundle;
+import javafx.scene.media.Media;
 
 public class MyViewController implements Initializable, Observer {
     public MyViewModel viewModel;
     private boolean solutionShown = false;
     private boolean nextStepVisible = false;
     private Position highlightedPosition = null;
-
+    private MediaPlayer clickSound;
+    private MediaPlayer gameAudio;
+    private MediaPlayer winAudio;
+    private MediaPlayer wallSound;
     public void setViewModel(MyViewModel viewModel) {
         this.viewModel = viewModel;
         this.viewModel.addObserver(this);
@@ -86,6 +91,31 @@ public class MyViewController implements Initializable, Observer {
 
         mazeDisplayer.widthProperty().addListener((obs, oldVal, newVal) -> mazeDisplayer.redraw());
         mazeDisplayer.heightProperty().addListener((obs, oldVal, newVal) -> mazeDisplayer.redraw());
+        try {
+            Media click = new Media(getClass().getResource("/Sounds/movement.mp3").toExternalForm());
+            clickSound = new MediaPlayer(click);
+        } catch (Exception e) {
+            System.out.println("Error loading click sound: " + e.getMessage());
+        }
+        try {
+            Media click = new Media(getClass().getResource("/Sounds/wall.mp3").toExternalForm());
+            clickSound = new MediaPlayer(click);
+        } catch (Exception e) {
+            System.out.println("Error loading click sound: " + e.getMessage());
+        }
+        try {
+            Media bg = new Media(getClass().getResource("/Sounds/gameAudio.mp3").toExternalForm());
+            gameAudio = new MediaPlayer(bg);
+        } catch (Exception e) {
+            System.out.println("Error loading game music: " + e.getMessage());
+        }
+        try {
+            Media bg = new Media(getClass().getResource("/Sounds/win.mp3").toExternalForm());
+            winAudio = new MediaPlayer(bg);
+        } catch (Exception e) {
+            System.out.println("Error loading game music: " + e.getMessage());
+        }
+
     }
 
     public void handleKeyPress(KeyEvent event) {
@@ -121,7 +151,8 @@ public class MyViewController implements Initializable, Observer {
 
     private void playerMoved() {
         setPlayerPosition(viewModel.getPlayerRow(), viewModel.getPlayerCol());
-
+        clickSound.stop();  // optional: stop current if already playing
+        clickSound.play();
         nextStepVisible = false;
         highlightedPosition = null;
 
@@ -167,9 +198,11 @@ public class MyViewController implements Initializable, Observer {
             Position goalPosition = maze.getGoalPosition();
             mazeDisplayer.setPlayerPosition(playerPosition.getRowIndex(), playerPosition.getColumnIndex());
             mazeDisplayer.setEndPoint(goalPosition.getRowIndex(), goalPosition.getColumnIndex());
-
             mazeRows.getParent().requestFocus();
             Platform.runLater(() -> mazeDisplayer.requestFocus());
+            winAudio.stop();
+            gameAudio.setCycleCount(MediaPlayer.INDEFINITE); // loop
+            gameAudio.play();
 
         } catch (NumberFormatException e) {
             System.out.println("Invalid input: rows and columns must be integers.");
@@ -342,6 +375,9 @@ public class MyViewController implements Initializable, Observer {
 
     private void showVictoryGIFThenDialog() {
         mazeDisplayer.setVisible(false);
+        gameAudio.stop();
+        winAudio.setCycleCount(MediaPlayer.INDEFINITE);
+        winAudio.play();
         try {
             InputStream gifStream = getClass().getResourceAsStream("/victory.gif");
             if (gifStream == null) {
@@ -372,6 +408,7 @@ public class MyViewController implements Initializable, Observer {
         ButtonType newGame = new ButtonType("New Game");
         ButtonType exit = new ButtonType("Exit");
         alert.getButtonTypes().setAll(newGame, exit);
+
 
         alert.showAndWait().ifPresent(response -> {
             if (response == newGame) {

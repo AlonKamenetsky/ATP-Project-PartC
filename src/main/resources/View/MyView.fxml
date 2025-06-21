@@ -65,11 +65,11 @@
         <VBox spacing="15" alignment="TOP_LEFT">
             <HBox spacing="5">
                 <Label text="Rows:"/>
-                <TextField fx:id="mazeRows" prefWidth="60"/>
+                <TextField fx:id="mazeRows" prefWidth="60" editable="false" focusTraversable="false"/>
             </HBox>
             <HBox spacing="5">
                 <Label text="Columns:"/>
-                <TextField fx:id="mazeColumns" prefWidth="60"/>
+                <TextField fx:id="mazeColumns" prefWidth="60" editable="false" focusTraversable="false"/>
             </HBox>
 
             <!-- NEW: Step counter -->
@@ -79,6 +79,7 @@
             <Label fx:id="timeCounter" text="⏱ Time: 0s" style="-fx-font-size: 14px;"/>
         </VBox>
     </left>
+
 
     <!-- RIGHT - Action buttons -->
     <right>
