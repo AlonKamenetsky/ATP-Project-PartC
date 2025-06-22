@@ -8,48 +8,123 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Observer;
 
+/**
+ * Interface for the Model layer in the MVVM architecture.
+ * Handles the logic and data for maze generation, player movement, solution computation, and game state tracking.
+ */
 public interface IModel {
-    public void generateMaze(int rows, int cols);
 
-    public int getPlayerRow();
+    /**
+     * Generates a new maze with the given dimensions.
+     * @param rows number of rows in the maze
+     * @param cols number of columns in the maze
+     */
+    void generateMaze(int rows, int cols);
 
-    public int getPlayerCol();
+    /**
+     * @return the current row index of the player
+     */
+    int getPlayerRow();
 
-    public void solveMaze();
+    /**
+     * @return the current column index of the player
+     */
+    int getPlayerCol();
 
-    public void updatePlayerLocation(Model.MovementDirection direction);
+    /**
+     * Solves the current maze using a predefined or random algorithm.
+     */
+    void solveMaze();
 
-    public Position getPlayerPosition();
+    /**
+     * Updates the player's position based on the given movement direction.
+     * @param direction the direction to move the player
+     */
+    void updatePlayerLocation(Model.MovementDirection direction);
 
-    public int getMazeRows();
+    /**
+     * @return the current position of the player
+     */
+    Position getPlayerPosition();
 
-    public int getMazeCols();
+    /**
+     * @return the number of rows in the maze
+     */
+    int getMazeRows();
 
-    public int getCell(int row, int col);
+    /**
+     * @return the number of columns in the maze
+     */
+    int getMazeCols();
 
-    public void movePlayer(int newRow, int newCol);
+    /**
+     * Returns the value at the specified cell in the maze.
+     * @param row the row index
+     * @param col the column index
+     * @return cell value (0 = path, 1 = wall)
+     */
+    int getCell(int row, int col);
 
-    public void assignObserver(Observer o);
+    /**
+     * Moves the player to the specified cell directly.
+     * Intended for manual movement or animation steps.
+     * @param newRow the target row
+     * @param newCol the target column
+     */
+    void movePlayer(int newRow, int newCol);
 
-    public Solution getSolution();
+    /**
+     * Assigns an observer to the model for update notifications.
+     * @param o the observer to be assigned
+     */
+    void assignObserver(Observer o);
 
-    public Maze getMaze();
+    /**
+     * @return the solution path to the maze, if one has been computed
+     */
+    Solution getSolution();
 
-    public Position getEndPoint();
+    /**
+     * @return the current maze object
+     */
+    Maze getMaze();
 
-    public void loadMazeFromFile(File file) throws FileNotFoundException;
+    /**
+     * @return the target (end) position in the maze
+     */
+    Position getEndPoint();
 
-    public void saveMazeToFile(File file) throws FileNotFoundException;
+    /**
+     * Loads a maze from a given file.
+     * @param file the file containing the maze data
+     * @throws FileNotFoundException if the file does not exist
+     */
+    void loadMazeFromFile(File file) throws FileNotFoundException;
 
-    public boolean shouldShowVictorySequence();
-     public int getStepCount();
+    /**
+     * Saves the current maze to a specified file.
+     * @param file the file to save the maze into
+     * @throws FileNotFoundException if the file cannot be created or accessed
+     */
+    void saveMazeToFile(File file) throws FileNotFoundException;
 
-    public long getElapsedTimeInSeconds();
+    /**
+     * @return true if the victory sequence (e.g. animation or dialog) should be shown
+     */
+    boolean shouldShowVictorySequence();
 
-    public String getLastUsedSolver();
+    /**
+     * @return the number of steps the player has taken in the maze
+     */
+    int getStepCount();
 
+    /**
+     * @return the elapsed time since the start of the maze in seconds
+     */
+    long getElapsedTimeInSeconds();
 
-
-
-
+    /**
+     * @return the name of the last algorithm used to solve the maze
+     */
+    String getLastUsedSolver();
 }

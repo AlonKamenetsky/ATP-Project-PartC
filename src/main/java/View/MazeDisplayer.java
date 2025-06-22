@@ -9,33 +9,43 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
+
 import java.util.List;
 
+/**
+ * A custom JavaFX Canvas responsible for visually rendering a maze,
+ * including the player, walls, background, solution path, goal, and next step hint.
+ */
 public class MazeDisplayer extends Canvas {
+
     private Maze maze;
     private Solution solution;
+    private Maze currentMaze;
     private int rows;
     private int cols;
-    private Maze currentMaze;
-    // player position:
+
+    // Player position
     private int playerRow;
     private int playerCol;
-    // wall and player images:
-    StringProperty imageFileNameWall = new SimpleStringProperty();
-    StringProperty imageFileNamePlayer = new SimpleStringProperty();
-    // goal position
+
+    // Goal position
     private int goalRow;
     private int goalCol;
+
+    // Next step hint (used for solution preview)
     private Position nextStepPosition;
     private Image nextStepImage;
 
+    // Dynamic wall/player image paths
+    StringProperty imageFileNameWall = new SimpleStringProperty();
+    StringProperty imageFileNamePlayer = new SimpleStringProperty();
 
-
-
+    /**
+     * Constructor loads the "next step" hint image if available.
+     */
     public MazeDisplayer() {
         try {
             nextStepImage = new Image(getClass().getResourceAsStream("/Go+Here.png"));
@@ -43,7 +53,6 @@ public class MazeDisplayer extends Canvas {
             System.out.println("Couldn't load next step image");
         }
     }
-
 
     public int getPlayerRow() {
         return playerRow;
@@ -53,6 +62,11 @@ public class MazeDisplayer extends Canvas {
         return playerCol;
     }
 
+    /**
+     * Parses a string-based AState to a Position object.
+     * @param state the AState to parse
+     * @return parsed Position
+     */
     private Position parsePosition(AState state) {
         String[] parts = state.getState().split(",");
         int row = Integer.parseInt(parts[0]);
@@ -60,25 +74,36 @@ public class MazeDisplayer extends Canvas {
         return new Position(row, col);
     }
 
-
+    /**
+     * Sets the player's current position and redraws the maze.
+     */
     public void setPlayerPosition(int row, int col) {
         this.playerRow = row;
         this.playerCol = col;
         draw();
     }
 
+    /**
+     * Sets the goal position and redraws the maze.
+     */
     public void setEndPoint(int row, int col) {
         this.goalRow = row;
         this.goalCol = col;
         draw();
     }
 
+    /**
+     * Sets the maze solution path and triggers redraw.
+     */
     public void setSolution(Solution solution) {
         this.solution = solution;
         draw();
     }
 
-
+    /**
+     * Sets the maze object and triggers drawing it.
+     * @param maze the maze to draw
+     */
     public void drawMaze(Maze maze) {
         this.currentMaze = maze;
         this.maze = maze;
@@ -87,12 +112,13 @@ public class MazeDisplayer extends Canvas {
         draw();
     }
 
-
+    /**
+     * Main draw method that renders the entire maze UI components.
+     */
     private void draw() {
         if (rows > 0 && cols > 0) {
             double canvasHeight = getHeight();
             double canvasWidth = getWidth();
-
             double cellHeight = canvasHeight / rows;
             double cellWidth = canvasWidth / cols;
 
@@ -108,9 +134,10 @@ public class MazeDisplayer extends Canvas {
         }
     }
 
-
+    /**
+     * Draws maze walls using either an image or fallback color.
+     */
     private void drawMazeWalls(GraphicsContext gc, double cellHeight, double cellWidth, int rows, int cols) {
-
         Image wallImage = null;
         try {
             wallImage = new Image(getClass().getResourceAsStream("/grass.png"));
@@ -125,21 +152,23 @@ public class MazeDisplayer extends Canvas {
                     double y = i * cellHeight;
                     if (wallImage == null)
                         gc.fillRect(x, y, cellWidth, cellHeight);
-                    else{
+                    else {
                         gc.setFill(Color.BLACK);
                         gc.drawImage(wallImage, x, y, cellWidth, cellHeight);
                     }
-
                 }
             }
         }
+
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(5.0);
         gc.strokeRect(0, 0, cols * cellWidth, rows * cellHeight);
     }
 
-
-    private void drawPlayer(GraphicsContext graphicsContext, double cellHeight, double cellWidth) {
+    /**
+     * Draws the player's current position.
+     */
+    private void drawPlayer(GraphicsContext gc, double cellHeight, double cellWidth) {
         double x = getPlayerCol() * cellWidth;
         double y = getPlayerRow() * cellHeight;
 
@@ -151,15 +180,17 @@ public class MazeDisplayer extends Canvas {
         }
 
         if (playerImage == null) {
-            graphicsContext.setFill(Color.GREEN);
-            graphicsContext.fillRect(x, y, cellWidth, cellHeight);
+            gc.setFill(Color.GREEN);
+            gc.fillRect(x, y, cellWidth, cellHeight);
         } else {
-            graphicsContext.drawImage(playerImage, x, y, cellWidth, cellHeight);
+            gc.drawImage(playerImage, x, y, cellWidth, cellHeight);
         }
     }
 
-
-    private void drawEndPoint(GraphicsContext graphicsContext, double cellHeight, double cellWidth) {
+    /**
+     * Draws the goal (end point) position.
+     */
+    private void drawEndPoint(GraphicsContext gc, double cellHeight, double cellWidth) {
         double y = maze.getGoalPosition().getRowIndex() * cellHeight;
         double x = maze.getGoalPosition().getColumnIndex() * cellWidth;
 
@@ -171,15 +202,16 @@ public class MazeDisplayer extends Canvas {
         }
 
         if (endPointImage == null) {
-            graphicsContext.setFill(Color.BLUE);
-            graphicsContext.fillRect(x, y, cellWidth, cellHeight);
-        }
-        else {
-            graphicsContext.drawImage(endPointImage, x, y, cellWidth, cellHeight);
+            gc.setFill(Color.BLUE);
+            gc.fillRect(x, y, cellWidth, cellHeight);
+        } else {
+            gc.drawImage(endPointImage, x, y, cellWidth, cellHeight);
         }
     }
 
-
+    /**
+     * Draws the solution path as a yellow line from the player to the goal.
+     */
     private void drawSolution(GraphicsContext gc, double cellHeight, double cellWidth) {
         if (solution == null || solution.getSolutionPath().size() < 2)
             return;
@@ -204,7 +236,6 @@ public class MazeDisplayer extends Canvas {
         gc.setLineCap(StrokeLineCap.ROUND);
         gc.setLineJoin(StrokeLineJoin.ROUND);
         gc.setLineWidth(5);
-
         gc.setStroke(new Color(1.0, 1.0, 0.0, 0.6));
 
         for (int i = startIndex; i < path.size() - 1; i++) {
@@ -220,15 +251,19 @@ public class MazeDisplayer extends Canvas {
         }
     }
 
-
-
+    /**
+     * Clears the displayed solution and redraws the maze without it.
+     */
     public void clearSolution() {
         this.solution = null;
-        drawMaze(currentMaze); // redraw maze without a solution
+        drawMaze(currentMaze);
         setPlayerPosition(playerRow, playerCol);
         setEndPoint(goalRow, goalCol);
     }
 
+    /**
+     * Draws the background for each maze cell, using an image or fallback color.
+     */
     private void drawMazeBackground(GraphicsContext gc, double cellHeight, double cellWidth, int rows, int cols) {
         Image backgroundImage = null;
         try {
@@ -250,6 +285,10 @@ public class MazeDisplayer extends Canvas {
             }
         }
     }
+
+    /**
+     * Redraws the entire canvas based on the current maze and state.
+     */
     public void redraw() {
         if (maze == null)
             return;
@@ -268,17 +307,25 @@ public class MazeDisplayer extends Canvas {
             double y = nextStepPosition.getRowIndex() * cellHeight;
             gc.drawImage(nextStepImage, x, y, cellWidth, cellHeight);
         }
+
         drawSolution(gc, cellHeight, cellWidth);
         drawPlayer(gc, cellHeight, cellWidth);
         drawEndPoint(gc, cellHeight, cellWidth);
     }
 
-
+    /**
+     * Displays the "next step" hint image at a specific cell.
+     * @param row row index of the hint
+     * @param col column index of the hint
+     */
     public void showNextStepImage(int row, int col) {
         this.nextStepPosition = new Position(row, col);
         redraw();
     }
 
+    /**
+     * Removes the "next step" image hint from the display.
+     */
     public void removeNextStepImage() {
         this.nextStepPosition = null;
         redraw();

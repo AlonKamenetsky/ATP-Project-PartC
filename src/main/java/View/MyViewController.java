@@ -29,33 +29,52 @@ import java.util.Observer;
 import java.util.ResourceBundle;
 import javafx.scene.media.Media;
 
+/**
+ * Controller class for the JavaFX Maze Game.
+ * Acts as the View in MVVM, responding to UI events and updating visuals via the ViewModel.
+ * Handles maze display, player movement, audio feedback, solution display, and dialog interaction.
+ */
 public class MyViewController implements Initializable, Observer {
+
     public MyViewModel viewModel;
-    private boolean solutionShown = false;
+
     private boolean nextStepVisible = false;
     private Position highlightedPosition = null;
+
     private MediaPlayer clickSound;
     private MediaPlayer gameAudio;
     private MediaPlayer winAudio;
-    public void setViewModel(MyViewModel viewModel) {
-        this.viewModel = viewModel;
-        this.viewModel.addObserver(this);
-    }
 
+    // FXML-injected components
     @FXML private MazeDisplayer mazeDisplayer;
     @FXML private Label playerRow;
     @FXML private Label playerCol;
     @FXML private TextField mazeRows;
+    @FXML private TextField mazeColumns;
     @FXML private ImageView victoryGif;
     @FXML private BorderPane rootPane;
     @FXML private StackPane mazeContainer;
     @FXML private Label stepCounter;
     @FXML private Label timeCounter;
-    @FXML private TextField mazeColumns;
+
     private Timeline timer;
+
     StringProperty updatePlayerRow = new SimpleStringProperty();
     StringProperty updatePlayerCol = new SimpleStringProperty();
 
+    /**
+     * Sets the ViewModel and registers the controller as an observer.
+     * @param viewModel the shared ViewModel instance
+     */
+    public void setViewModel(MyViewModel viewModel) {
+        this.viewModel = viewModel;
+        this.viewModel.addObserver(this);
+    }
+
+    /**
+     * Called once upon UI initialization.
+     * Sets up bindings, event listeners, audio, and timer logic.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         playerRow.textProperty().bind(updatePlayerRow);
@@ -65,52 +84,35 @@ public class MyViewController implements Initializable, Observer {
         mazeDisplayer.setOnKeyPressed(this::handleKeyPress);
 
         mazeRows.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode().isArrowKey()) {
-                event.consume();
-            }
+            if (event.getCode().isArrowKey()) event.consume();
         });
-
         mazeColumns.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode().isArrowKey()) {
-                event.consume();
-            }
+            if (event.getCode().isArrowKey()) event.consume();
         });
 
-        timer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-            timeCounter.setText("⏱ Time: " + viewModel.getElapsedTimeInSeconds() + "s");
-        }));
+        timer = new Timeline(new KeyFrame(Duration.seconds(1), e ->
+                timeCounter.setText("⏱ Time: " + viewModel.getElapsedTimeInSeconds() + "s")));
         timer.setCycleCount(Timeline.INDEFINITE);
-
-        mazeContainer.setMinWidth(0);
-        mazeContainer.setMinHeight(0);
 
         mazeDisplayer.widthProperty().bind(mazeContainer.widthProperty());
         mazeDisplayer.heightProperty().bind(mazeContainer.heightProperty());
-
         mazeDisplayer.widthProperty().addListener((obs, oldVal, newVal) -> mazeDisplayer.redraw());
         mazeDisplayer.heightProperty().addListener((obs, oldVal, newVal) -> mazeDisplayer.redraw());
-        try {
-            Media click = new Media(getClass().getResource("/Sounds/movement.mp3").toExternalForm());
-            clickSound = new MediaPlayer(click);
-        } catch (Exception e) {
-            System.out.println("Error loading click sound: " + e.getMessage());
-        }
 
+        // Load sounds
         try {
-            Media bg = new Media(getClass().getResource("/Sounds/gameAudio.mp3").toExternalForm());
-            gameAudio = new MediaPlayer(bg);
+            clickSound = new MediaPlayer(new Media(getClass().getResource("/Sounds/movement.mp3").toExternalForm()));
+            gameAudio = new MediaPlayer(new Media(getClass().getResource("/Sounds/gameAudio.mp3").toExternalForm()));
+            winAudio = new MediaPlayer(new Media(getClass().getResource("/Sounds/win.mp3").toExternalForm()));
         } catch (Exception e) {
-            System.out.println("Error loading game music: " + e.getMessage());
+            System.out.println("Error loading sound: " + e.getMessage());
         }
-        try {
-            Media bg = new Media(getClass().getResource("/Sounds/win.mp3").toExternalForm());
-            winAudio = new MediaPlayer(bg);
-        } catch (Exception e) {
-            System.out.println("Error loading game music: " + e.getMessage());
-        }
-
     }
 
+    /**
+     * Handles keyboard movement (WASD + diagonals).
+     * @param event the key event
+     */
     public void handleKeyPress(KeyEvent event) {
         switch (event.getCode()) {
             case W -> viewModel.movePlayer(MovementDirection.UP);
@@ -123,10 +125,12 @@ public class MyViewController implements Initializable, Observer {
             case C -> viewModel.movePlayer(MovementDirection.DOWN_RIGHT);
             default -> { return; }
         }
-
         mazeDisplayer.requestFocus();
     }
 
+    /**
+     * Observer update method. Reacts to changes from the ViewModel.
+     */
     @Override
     public void update(Observable o, Object arg) {
         String change = (String) arg;
@@ -134,14 +138,23 @@ public class MyViewController implements Initializable, Observer {
             case "mazeGenerated" -> mazeGenerated();
             case "playerMoved" -> playerMoved();
             case "mazeSolved" -> mazeSolved();
-            default -> System.out.println("Not implemented change: " + change);
+            default -> System.out.println("Unhandled update: " + change);
         }
     }
 
-    private void mazeSolved() {
-        mazeDisplayer.setSolution(viewModel.getSolution());
+    /**
+     * Called when a new maze is generated.
+     */
+    private void mazeGenerated() {
+        mazeDisplayer.drawMaze(viewModel.getMaze());
+        timer.playFromStart();
+        stepCounter.setText("🚶 Steps: 0");
+        timeCounter.setText("⏱ Time: 0s");
     }
 
+    /**
+     * Updates the maze view and UI after a player move.
+     */
     private void playerMoved() {
         setPlayerPosition(viewModel.getPlayerRow(), viewModel.getPlayerCol());
         clickSound.stop();
@@ -153,30 +166,43 @@ public class MyViewController implements Initializable, Observer {
             showVictoryGIFThenDialog();
             timer.stop();
         }
+
         stepCounter.setText("🚶 Steps: " + viewModel.getStepCount());
     }
 
-    private void mazeGenerated() {
-        mazeDisplayer.drawMaze(viewModel.getMaze());
-        timer.playFromStart();
-        stepCounter.setText("🚶 Steps: 0");
-        timeCounter.setText("⏱ Time: 0s");
+    /**
+     * Called when the maze is solved and updates the solution view.
+     */
+    private void mazeSolved() {
+        mazeDisplayer.setSolution(viewModel.getSolution());
     }
 
+    /**
+     * Binds UI player row label.
+     */
+    public void setUpdatePlayerRow(int updatePlayerRow) {
+        this.updatePlayerRow.set(String.valueOf(updatePlayerRow));
+    }
+
+    /**
+     * Binds UI player column label.
+     */
+    public void setUpdatePlayerCol(int updatePlayerCol) {
+        this.updatePlayerCol.set(String.valueOf(updatePlayerCol));
+    }
+
+    /**
+     * Sets and draws player position.
+     */
     public void setPlayerPosition(int row, int col) {
         mazeDisplayer.setPlayerPosition(row, col);
         setUpdatePlayerRow(row);
         setUpdatePlayerCol(col);
     }
 
-    public void setUpdatePlayerRow(int updatePlayerRow) {
-        this.updatePlayerRow.set(updatePlayerRow + "");
-    }
-
-    public void setUpdatePlayerCol(int updatePlayerCol) {
-        this.updatePlayerCol.set(updatePlayerCol + "");
-    }
-
+    /**
+     * Generates and starts a new maze from user input.
+     */
     @FXML
     public void onStartClicked() {
         try {
@@ -185,34 +211,36 @@ public class MyViewController implements Initializable, Observer {
 
             viewModel.generateMaze(rows, cols);
             Maze maze = viewModel.getMaze();
-
             mazeDisplayer.drawMaze(maze);
-            Position playerPosition = maze.getStartPosition();
-            Position goalPosition = maze.getGoalPosition();
-            mazeDisplayer.setPlayerPosition(playerPosition.getRowIndex(), playerPosition.getColumnIndex());
-            mazeDisplayer.setEndPoint(goalPosition.getRowIndex(), goalPosition.getColumnIndex());
+            mazeDisplayer.setPlayerPosition(maze.getStartPosition().getRowIndex(), maze.getStartPosition().getColumnIndex());
+            mazeDisplayer.setEndPoint(maze.getGoalPosition().getRowIndex(), maze.getGoalPosition().getColumnIndex());
+
+            gameAudio.setCycleCount(MediaPlayer.INDEFINITE);
+            gameAudio.play();
+            winAudio.stop();
             mazeRows.getParent().requestFocus();
             Platform.runLater(() -> mazeDisplayer.requestFocus());
-            winAudio.stop();
-            gameAudio.setCycleCount(MediaPlayer.INDEFINITE); // loop
-            gameAudio.play();
 
         } catch (NumberFormatException e) {
-            System.out.println("Invalid input: rows and columns must be integers.");
+            System.out.println("Invalid input: must be integers.");
         }
     }
 
+    /**
+     * Triggers maze solution and displays the full path.
+     */
     @FXML
     public void solveMaze() {
         viewModel.solveMaze();
         mazeDisplayer.setSolution(viewModel.getSolution());
-
         nextStepVisible = false;
         highlightedPosition = null;
-
         Platform.runLater(() -> mazeDisplayer.requestFocus());
     }
 
+    /**
+     * Shows only the next suggested move in the solution.
+     */
     @FXML
     public void showNextStep() {
         viewModel.solveMaze();
@@ -234,35 +262,26 @@ public class MyViewController implements Initializable, Observer {
         }
 
         mazeDisplayer.getParent().requestFocus();
-        Platform.runLater(() -> {
-            mazeDisplayer.setFocusTraversable(true);
-            mazeDisplayer.requestFocus();
-        });
+        Platform.runLater(() -> mazeDisplayer.requestFocus());
     }
 
-    private Position parsePosition(String state) {
-        String[] parts = state.replaceAll("[{}]", "").split(",");
-        int row = Integer.parseInt(parts[0]);
-        int col = Integer.parseInt(parts[1]);
-        return new Position(row, col);
-    }
-
+    /**
+     * Removes the full solution display from the maze.
+     */
     @FXML
     public void removeSolution() {
         if (viewModel.getMaze() == null) return;
         mazeDisplayer.clearSolution();
         nextStepVisible = false;
         highlightedPosition = null;
-
-        Platform.runLater(() -> {
-            mazeDisplayer.setFocusTraversable(true);
-            mazeDisplayer.requestFocus();
-        });
+        Platform.runLater(() -> mazeDisplayer.requestFocus());
     }
 
+    /**
+     * Removes the highlighted next step image.
+     */
     @FXML
     public void removeNextStep() {
-        mazeDisplayer.getParent().requestFocus();
         mazeDisplayer.removeNextStepImage();
         nextStepVisible = false;
         highlightedPosition = null;
@@ -272,9 +291,22 @@ public class MyViewController implements Initializable, Observer {
         pause.play();
     }
 
+    /**
+     * Parses a string position format like "3,4" into a Position.
+     */
+    private Position parsePosition(String state) {
+        String[] parts = state.replaceAll("[{}]", "").split(",");
+        int row = Integer.parseInt(parts[0]);
+        int col = Integer.parseInt(parts[1]);
+        return new Position(row, col);
+    }
+
+    /**
+     * Saves the current maze to a file using FileChooser.
+     */
     public void handleSaveMaze(javafx.event.ActionEvent actionEvent) {
         if (viewModel.getMaze() == null) {
-            showAlert("Save Failed", "Maze is not initialized. Please generate or load a maze first.");
+            showAlert("Save Failed", "Maze is not initialized.");
             return;
         }
         FileChooser fileChooser = new FileChooser();
@@ -284,29 +316,26 @@ public class MyViewController implements Initializable, Observer {
             viewModel.saveMaze(file);
         }
     }
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
 
+    /**
+     * Loads a maze from a selected file and redraws it.
+     */
     public void handleLoadMaze(javafx.event.ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load Maze");
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             viewModel.loadMaze(file);
-            Maze maze = viewModel.getMaze();
-            mazeDisplayer.drawMaze(maze);
+            mazeDisplayer.drawMaze(viewModel.getMaze());
             mazeDisplayer.setPlayerPosition(viewModel.getPlayerRow(), viewModel.getPlayerCol());
             mazeDisplayer.setEndPoint(viewModel.getEndPointRow(), viewModel.getEndPointCol());
-
             Platform.runLater(() -> mazeDisplayer.requestFocus());
         }
     }
 
+    /**
+     * Opens a dialog to enter new maze dimensions and generates it.
+     */
     @FXML
     private void onNewClicked() {
         TextInputDialog dialog = new TextInputDialog("10x10");
@@ -319,20 +348,18 @@ public class MyViewController implements Initializable, Observer {
                 String[] parts = input.toLowerCase().split("x");
                 int rows = Integer.parseInt(parts[0].trim());
                 int cols = Integer.parseInt(parts[1].trim());
-
                 mazeRows.setText(String.valueOf(rows));
                 mazeColumns.setText(String.valueOf(cols));
                 onStartClicked();
             } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Invalid Input");
-                alert.setHeaderText(null);
-                alert.setContentText("Please enter a valid format: 10x10");
-                alert.showAndWait();
+                showAlert("Invalid Input", "Please enter a valid format: 10x10");
             }
         });
     }
 
+    /**
+     * Displays current maze properties including size and algorithm used.
+     */
     @FXML
     private void onPropertiesClicked() {
         String solverName = viewModel.getLastUsedSolverName();
@@ -340,52 +367,56 @@ public class MyViewController implements Initializable, Observer {
         alert.setTitle("Maze Properties");
         alert.setHeaderText("Current Maze Properties");
         alert.setContentText(
-                "🧩 Maze Configuration:\n\n" +
-                    "🧠 Algorithm used to solve: " + solverName + "\n" +
-                    "📐 Maze size: " + viewModel.getMaze().getRows() + " x " + viewModel.getMaze().getCols() + "\n" +
-                    "⚙️ Generator: MyMazeGenerator\n" +
-                    "🚩 Start: " + viewModel.getMaze().getStartPosition() + "\n" +
-                    "🏁 Goal: " + viewModel.getMaze().getGoalPosition() + "\n\n"
+                "🧠 Algorithm used: " + solverName + "\n" +
+                        "📐 Size: " + viewModel.getMaze().getRows() + " x " + viewModel.getMaze().getCols() + "\n" +
+                        "🚩 Start: " + viewModel.getMaze().getStartPosition() + "\n" +
+                        "🏁 Goal: " + viewModel.getMaze().getGoalPosition()
         );
         alert.showAndWait();
     }
 
-
-    @FXML
-    private void onExitClicked() {
-        System.exit(0);
-    }
-
+    /**
+     * Displays help dialog with movement keys and feature usage.
+     */
     @FXML
     private void onHelpClicked() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Help");
         alert.setHeaderText("Game Help");
-        alert.setContentText("Use the following keys to move your player:\n" +
-                "W – Up\t\tA – Left\t\tS – Down\t\tD – Right\n" +
-                "Q – Up-Left\tE – Up-Right\tZ – Down-Left\tC – Down-Right\n\n" +
-                "Click 'Solve Maze' to display the optimal path to the goal (without moving the player).\n" +
-                "Click 'Show Next Step' to highlight the next move you should take.\n" +
-                "You can clear the displayed solution using 'Remove Solution' or 'Remove Next Step'.");
+        alert.setContentText("Use W/A/S/D or Q/E/Z/C to move.\nUse buttons to show or clear solutions.");
         alert.showAndWait();
     }
 
+    /**
+     * Displays the about dialog with project information.
+     */
     @FXML
     private void onAboutClicked() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("About");
         alert.setHeaderText("Maze App");
-        alert.setContentText("Maze App was created as a demo project by Shay Smertenko and Alon Kamenetsky. Version 1.0");
+        alert.setContentText("Maze App was created by Shay Smertenko and Alon Kamenetsky.\nVersion 1.0");
         alert.showAndWait();
     }
 
+    /**
+     * Quits the application.
+     */
+    @FXML
+    private void onExitClicked() {
+        System.exit(0);
+    }
+
+    /**
+     * Displays a GIF animation followed by a win dialog.
+     */
     private void showVictoryGIFThenDialog() {
         mazeDisplayer.setVisible(false);
         gameAudio.stop();
         winAudio.setCycleCount(MediaPlayer.INDEFINITE);
         winAudio.play();
-        try {
-            InputStream gifStream = getClass().getResourceAsStream("/victory.gif");
+
+        try (InputStream gifStream = getClass().getResourceAsStream("/victory.gif")) {
             if (gifStream == null) {
                 System.out.println("GIF not found!");
                 return;
@@ -406,15 +437,17 @@ public class MyViewController implements Initializable, Observer {
         pause.play();
     }
 
+    /**
+     * Shows a confirmation dialog after winning the maze.
+     */
     private void showVictoryDialog() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Victory!");
         alert.setHeaderText("You solved the maze!");
-        alert.setContentText("Would you like to play again or exit the game?");
+        alert.setContentText("Would you like to play again or exit?");
         ButtonType newGame = new ButtonType("New Game");
         ButtonType exit = new ButtonType("Exit");
         alert.getButtonTypes().setAll(newGame, exit);
-
 
         alert.showAndWait().ifPresent(response -> {
             if (response == newGame) {
@@ -425,4 +458,14 @@ public class MyViewController implements Initializable, Observer {
         });
     }
 
+    /**
+     * Utility method to show an alert with custom title and content.
+     */
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 }
