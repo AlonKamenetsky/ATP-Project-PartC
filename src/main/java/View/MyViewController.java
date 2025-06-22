@@ -97,12 +97,7 @@ public class MyViewController implements Initializable, Observer {
         } catch (Exception e) {
             System.out.println("Error loading click sound: " + e.getMessage());
         }
-        try {
-            Media click = new Media(getClass().getResource("/Sounds/wall.mp3").toExternalForm());
-            clickSound = new MediaPlayer(click);
-        } catch (Exception e) {
-            System.out.println("Error loading click sound: " + e.getMessage());
-        }
+
         try {
             Media bg = new Media(getClass().getResource("/Sounds/gameAudio.mp3").toExternalForm());
             gameAudio = new MediaPlayer(bg);
@@ -151,7 +146,7 @@ public class MyViewController implements Initializable, Observer {
 
     private void playerMoved() {
         setPlayerPosition(viewModel.getPlayerRow(), viewModel.getPlayerCol());
-        clickSound.stop();  // optional: stop current if already playing
+        clickSound.stop();
         clickSound.play();
         nextStepVisible = false;
         highlightedPosition = null;
