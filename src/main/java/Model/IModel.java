@@ -46,6 +46,8 @@ public interface IModel {
 
     public long getElapsedTimeInSeconds();
 
+    public String getLastUsedSolver();
+
 
 
 

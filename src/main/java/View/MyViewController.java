@@ -337,8 +337,21 @@ public class MyViewController implements Initializable, Observer {
 
     @FXML
     private void onPropertiesClicked() {
-        System.out.println("Properties clicked - Opening settings window");
+        String solverName = viewModel.getLastUsedSolverName();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Maze Properties");
+        alert.setHeaderText("Current Maze Properties");
+        alert.setContentText(
+                "🧩 Maze Configuration:\n\n" +
+                    "🧠 Algorithm used to solve: " + solverName + "\n" +
+                    "📐 Maze size: " + viewModel.getMaze().getRows() + " x " + viewModel.getMaze().getCols() + "\n" +
+                    "⚙️ Generator: MyMazeGenerator\n" +
+                    "🚩 Start: " + viewModel.getMaze().getStartPosition() + "\n" +
+                    "🏁 Goal: " + viewModel.getMaze().getGoalPosition() + "\n\n"
+        );
+        alert.showAndWait();
     }
+
 
     @FXML
     private void onExitClicked() {
@@ -413,4 +426,5 @@ public class MyViewController implements Initializable, Observer {
             }
         });
     }
+
 }

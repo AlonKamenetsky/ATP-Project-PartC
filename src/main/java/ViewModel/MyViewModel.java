@@ -101,8 +101,6 @@ public class MyViewModel extends Observable implements Observer {
         alert.showAndWait();
     }
 
-
-
     public void loadMaze(File file) {
         try {
             model.loadMazeFromFile(file);
@@ -120,4 +118,9 @@ public class MyViewModel extends Observable implements Observer {
     public long getElapsedTimeInSeconds() {
         return model.getElapsedTimeInSeconds();
     }
+
+    public String getLastUsedSolverName() {
+        return model.getLastUsedSolver();
+    }
+
 }

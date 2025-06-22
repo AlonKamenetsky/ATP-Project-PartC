@@ -5,7 +5,7 @@ import algorithms.mazeGenerators.MyMazeGenerator;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.*;
 import javafx.application.Platform;
-
+import java.util.Random;
 import java.io.*;
 import java.util.Observable;
 import java.util.Observer;
@@ -21,6 +21,8 @@ public class MyModel extends Observable implements IModel {
     private boolean showVictorySequence = false;
     private int stepCount = 0;
     private long startTime = 0;
+    private String lastUsedSolver = "None";
+
 
 
 
@@ -131,16 +133,30 @@ public class MyModel extends Observable implements IModel {
         if (maze == null)
             return;
 
-        // Use current player position
         Position current = new Position(playerRow, playerCol);
-
-        Maze dynamicMaze = new Maze(maze.toByteArray()); // Make a copy
+        Maze dynamicMaze = new Maze(maze.toByteArray());
         dynamicMaze.setStartPosition(current);
 
         ISearchable searchableMaze = new SearchableMaze(dynamicMaze);
-        ISearchingAlgorithm solver = new BreadthFirstSearch();
+
+
+        ISearchingAlgorithm[] solvers = {
+                new BreadthFirstSearch(),
+                new DepthFirstSearch(),
+                new BestFirstSearch()
+        };
+
+        Random rand = new Random();
+        int index = rand.nextInt(solvers.length);
+        ISearchingAlgorithm solver = solvers[index];
+        this.lastUsedSolver = solver.getClass().getSimpleName();
+
         this.solution = solver.solve(searchableMaze);
+
+        setChanged();
+        notifyObservers("mazeSolved");
     }
+
 
     @Override
     public void assignObserver(Observer o) {
@@ -200,6 +216,12 @@ public class MyModel extends Observable implements IModel {
     @Override
     public long getElapsedTimeInSeconds() {
         return (System.currentTimeMillis() - startTime) / 1000;
+    }
+
+
+    @Override
+    public String getLastUsedSolver() {
+        return lastUsedSolver;
     }
 
 
