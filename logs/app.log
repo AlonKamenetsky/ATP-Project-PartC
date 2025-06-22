@@ -1,1 +1,5 @@
 
+[2025-06-22 17:46:44] [JavaFX Application Thread] INFO  Model.MyModel - Generating maze with size 10x10
+[2025-06-22 17:46:47] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 1, 6
+[2025-06-22 17:46:48] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 2, 8
+[2025-06-22 17:46:48] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 2, 6
