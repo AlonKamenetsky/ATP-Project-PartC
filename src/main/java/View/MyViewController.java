@@ -22,7 +22,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.AudioClip;
 import java.io.*;
 import java.net.URL;
 import java.util.Observable;
@@ -38,7 +37,6 @@ public class MyViewController implements Initializable, Observer {
     private MediaPlayer clickSound;
     private MediaPlayer gameAudio;
     private MediaPlayer winAudio;
-    private MediaPlayer wallSound;
     public void setViewModel(MyViewModel viewModel) {
         this.viewModel = viewModel;
         this.viewModel.addObserver(this);

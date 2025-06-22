@@ -4,7 +4,8 @@ import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.MyMazeGenerator;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.*;
-import javafx.application.Platform;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.util.Random;
 import java.io.*;
 import java.util.Observable;
@@ -22,6 +23,8 @@ public class MyModel extends Observable implements IModel {
     private int stepCount = 0;
     private long startTime = 0;
     private String lastUsedSolver = "None";
+    private static final Logger logger = LogManager.getLogger(MyModel.class);
+
 
 
 
@@ -32,6 +35,7 @@ public class MyModel extends Observable implements IModel {
 
 
     public void generateMaze(int rows, int cols) {
+        logger.info("Generating maze with size {}x{}", rows, cols);
         maze = myMazeGenerator.generate(rows, cols);
         playerPosition = maze.getStartPosition();
         playerRow = playerPosition.getRowIndex();
@@ -88,6 +92,7 @@ public class MyModel extends Observable implements IModel {
 
     public void movePlayer(int newRow, int newCol) {
         if (isWalkable(newRow, newCol)) {
+            logger.debug("Moving player to {}, {}", newRow, newCol);
             playerRow = newRow;
             playerCol = newCol;
             showVictorySequence = playerRow == maze.getGoalPosition().getRowIndex() &&
@@ -95,9 +100,14 @@ public class MyModel extends Observable implements IModel {
             stepCount++;
             setChanged();
             notifyObservers("playerMoved");
+            if (showVictorySequence) {
+                logger.info("Player reached the goal!");
+            }
+        } else {
+            logger.warn("Attempted to move to invalid cell {}, {}", newRow, newCol);
         }
-
     }
+
 
 
 
@@ -130,15 +140,16 @@ public class MyModel extends Observable implements IModel {
 
     @Override
     public void solveMaze() {
-        if (maze == null)
+        if (maze == null) {
+            logger.error("solveMaze() called but maze is null.");
             return;
+        }
 
         Position current = new Position(playerRow, playerCol);
         Maze dynamicMaze = new Maze(maze.toByteArray());
         dynamicMaze.setStartPosition(current);
 
         ISearchable searchableMaze = new SearchableMaze(dynamicMaze);
-
 
         ISearchingAlgorithm[] solvers = {
                 new BreadthFirstSearch(),
@@ -151,11 +162,14 @@ public class MyModel extends Observable implements IModel {
         ISearchingAlgorithm solver = solvers[index];
         this.lastUsedSolver = solver.getClass().getSimpleName();
 
+        logger.info("Solving maze using {}", lastUsedSolver);
+
         this.solution = solver.solve(searchableMaze);
 
         setChanged();
         notifyObservers("mazeSolved");
     }
+
 
 
     @Override
@@ -180,18 +194,23 @@ public class MyModel extends Observable implements IModel {
 
     public void saveMazeToFile(File file) throws FileNotFoundException {
         if(this.maze == null){
+            logger.error("Attempted to save null maze.");
             throw new IllegalStateException("Maze is null");
         }
         try (FileOutputStream fos = new FileOutputStream(file)) {
+            logger.info("Saving maze to file: {}", file.getName());
             byte[] data = maze.toByteArray();
             fos.write(data);
             fos.flush();
         } catch (IOException e) {
+            logger.error("Error saving maze to file", e);
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public void loadMazeFromFile(File file) throws FileNotFoundException {
+        logger.info("Loading maze from file: {}", file.getName());
         try (FileInputStream fis = new FileInputStream(file)) {
             byte[] bytes = fis.readAllBytes();
             this.maze = new Maze(bytes);
@@ -199,11 +218,14 @@ public class MyModel extends Observable implements IModel {
             this.playerRow = playerPosition.getRowIndex();
             this.playerCol = playerPosition.getColumnIndex();
             this.endPoint = maze.getGoalPosition();
+            setChanged();
             notifyObservers("maze loaded");
         } catch (IOException e) {
+            logger.error("Error loading maze from file", e);
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public boolean shouldShowVictorySequence() {
         return showVictorySequence;
