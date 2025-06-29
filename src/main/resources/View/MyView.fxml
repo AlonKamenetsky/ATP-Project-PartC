@@ -45,7 +45,8 @@
         <VBox spacing="10" alignment="CENTER" VBox.vgrow="ALWAYS">
             <StackPane fx:id="mazeContainer" VBox.vgrow="ALWAYS">
                 <MazeDisplayer fx:id="mazeDisplayer"
-                               StackPane.alignment="CENTER"/>
+                               StackPane.alignment="CENTER" />
+
                 <ImageView fx:id="victoryGif" fitWidth="400" fitHeight="300"
                            visible="false" StackPane.alignment="CENTER"/>
             </StackPane>
@@ -92,5 +93,6 @@
             <Button text="❌ Remove Next Step" onAction="#removeNextStep" maxWidth="140"/>
         </VBox>
     </right>
+
 
 </BorderPane>

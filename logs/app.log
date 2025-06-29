@@ -3,3 +3,36 @@
 [2025-06-22 17:46:47] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 1, 6
 [2025-06-22 17:46:48] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 2, 8
 [2025-06-22 17:46:48] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 2, 6
+[2025-06-22 18:37:27] [JavaFX Application Thread] INFO  Model.MyModel - Generating maze with size 10x10
+[2025-06-22 18:37:29] [JavaFX Application Thread] INFO  Model.MyModel - Player reached the goal!
+[2025-06-23 18:09:33] [JavaFX Application Thread] INFO  Model.MyModel - Generating maze with size 10x10
+[2025-06-23 18:22:16] [JavaFX Application Thread] INFO  Model.MyModel - Generating maze with size 10x10
+[2025-06-23 18:24:04] [JavaFX Application Thread] INFO  Model.MyModel - Generating maze with size 10x10
+[2025-06-23 18:25:58] [JavaFX Application Thread] INFO  Model.MyModel - Generating maze with size 10x10
+[2025-06-23 18:26:14] [JavaFX Application Thread] INFO  Model.MyModel - Generating maze with size 10x10
+[2025-06-23 18:27:20] [JavaFX Application Thread] INFO  Model.MyModel - Generating maze with size 10x10
+[2025-06-23 18:28:45] [JavaFX Application Thread] INFO  Model.MyModel - Generating maze with size 10x10
+[2025-06-23 18:30:05] [JavaFX Application Thread] INFO  Model.MyModel - Generating maze with size 10x10
+[2025-06-23 18:30:26] [JavaFX Application Thread] INFO  Model.MyModel - Generating maze with size 10x10
+[2025-06-23 18:30:30] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 10, 1
+[2025-06-23 18:30:32] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 10, 4
+[2025-06-23 18:30:32] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 10, 4
+[2025-06-23 18:30:33] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 10, 3
+[2025-06-23 18:30:33] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 10, 3
+[2025-06-23 18:30:34] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 12, 6
+[2025-06-23 18:30:35] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 13, 8
+[2025-06-23 18:30:35] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 12, 8
+[2025-06-23 18:30:35] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 11, 6
+[2025-06-23 18:30:36] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 8, 6
+[2025-06-23 18:30:36] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 8, 5
+[2025-06-23 18:30:38] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 10, 6
+[2025-06-23 18:30:38] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 10, 6
+[2025-06-23 18:30:39] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 10, 8
+[2025-06-23 18:30:39] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 10, 8
+[2025-06-23 18:30:40] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 10, 6
+[2025-06-23 18:30:43] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 10, 3
+[2025-06-23 18:30:44] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 16, 2
+[2025-06-23 18:30:44] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 16, 2
+[2025-06-23 18:30:45] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 16, 2
+[2025-06-23 18:30:45] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 15, 0
+[2025-06-23 18:30:46] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 17, 0

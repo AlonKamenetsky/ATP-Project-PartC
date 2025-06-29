@@ -51,7 +51,7 @@
     </dependency>
   </dependencies>
   <properties>
-    <javafx.version>24.0.1</javafx.version>
+    <javafx.version>15</javafx.version>
     <maven.compiler.target>17</maven.compiler.target>
     <maven.compiler.source>17</maven.compiler.source>
   </properties>

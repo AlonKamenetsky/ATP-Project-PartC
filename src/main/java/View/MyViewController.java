@@ -77,6 +77,8 @@ public class MyViewController implements Initializable, Observer {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        mazeDisplayer.widthProperty().bind(mazeContainer.widthProperty());
+        mazeDisplayer.heightProperty().bind(mazeContainer.heightProperty());
         playerRow.textProperty().bind(updatePlayerRow);
         playerCol.textProperty().bind(updatePlayerCol);
 

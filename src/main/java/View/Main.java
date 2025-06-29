@@ -26,6 +26,8 @@ public class Main extends Application {
         // Load the FXML layout for the main view
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/MyView.fxml"));
         Parent root = loader.load();
+        System.out.println(System.getProperty("javafx.runtime.version"));
+
 
         // Initialize the MVVM structure
         MyModel model = new MyModel();

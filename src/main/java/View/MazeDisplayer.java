@@ -52,7 +52,20 @@ public class MazeDisplayer extends Canvas {
         } catch (Exception e) {
             System.out.println("Couldn't load next step image");
         }
+
+        // Redraw when resized
+        widthProperty().addListener((obs, oldVal, newVal) -> {
+            if (maze != null) redraw();
+        });
+        heightProperty().addListener((obs, oldVal, newVal) -> {
+            if (maze != null) redraw();
+        });
+
+        // Let JavaFX call resize() if it wants
+        setManaged(true);
+        setFocusTraversable(true);
     }
+
 
     public int getPlayerRow() {
         return playerRow;
@@ -330,4 +343,14 @@ public class MazeDisplayer extends Canvas {
         this.nextStepPosition = null;
         redraw();
     }
+
+    @Override
+    public void resize(double width, double height) {
+        super.resize(width, height);
+        if (maze != null) redraw();
+    }
+
+
+
+
 }
