@@ -36,3 +36,6 @@
 [2025-06-23 18:30:45] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 16, 2
 [2025-06-23 18:30:45] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 15, 0
 [2025-06-23 18:30:46] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 17, 0
+[2025-06-29 14:06:49] [JavaFX Application Thread] INFO  Model.MyModel - Generating maze with size 10x10
+[2025-06-29 14:06:53] [JavaFX Application Thread] WARN  Model.MyModel - Attempted to move to invalid cell 0, 9
+[2025-06-29 14:06:55] [JavaFX Application Thread] INFO  Model.MyModel - Player reached the goal!
